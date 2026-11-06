@@ -200,15 +200,13 @@ function renderAdminSliders() {
                         </button>
                     </div>
 
-                    <img src="${item.img}" alt="${item.name}" style="height:100px; width:100px; object-fit:contain; border-radius:10px; ${!isAvailable ? 'filter: grayscale(100%);' : ''}">
+                    <img src="${item.img}" alt="${item.name}" loading="lazy" style="height:100px; width:100px; object-fit:contain; border-radius:10px; ${!isAvailable ? 'filter: grayscale(100%);' : ''}">
                     <h4 class="text-${category.toLowerCase()}" style="margin-top: 10px;">${item.name} ${statusText}</h4>
                     <p style="color:var(--primary-blue); font-weight:bold; margin-top:5px;">${item.price} تومان</p>
                 </div>
             `;
         });
 
-        // تنظیمات جدید اسلایدر ادمین
-              // تنظیمات جدید اسلایدر ادمین
         new Swiper(`#swiper-${category}`, {
             slidesPerView: 'auto',
             spaceBetween: 20,

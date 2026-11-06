@@ -25,7 +25,8 @@ function initSlider(category) {
 
         wrapper.innerHTML += `
             <div class="swiper-slide" style="${isOutOfStock ? 'opacity: 0.8;' : ''}">
-                <img src="${item.img}" alt="${item.name}" style="${isOutOfStock ? 'filter: grayscale(100%);' : ''}">
+                <!-- کلمه loading="lazy" به اینجا اضافه شد -->
+                <img src="${item.img}" alt="${item.name}" loading="lazy" style="${isOutOfStock ? 'filter: grayscale(100%);' : ''}">
                 <h4 class="text-${category.toLowerCase()}">${item.name} ${statusText}</h4>
                 <p style="color:var(--primary-blue); font-weight:bold; margin-top:5px;">${item.price} تومان</p>
                 ${btnHTML}
@@ -33,11 +34,11 @@ function initSlider(category) {
         `;
     });
 
-    // تنظیمات جدید اسلایدر برای نمایش درست آیتم‌های کم
+    // تنظیمات اصلاح شده اسلایدر (برای حفظ سایز 220px و وسط‌چین شدن)
     new Swiper(`#swiper-${category}`, {
-        slidesPerView: 'auto', // اجازه میده عرض هر اسلاید از CSS خونده بشه
+        slidesPerView: 'auto', 
         spaceBetween: 20,
-        centerInsufficientSlides: true, // اگر تعداد آیتم ها کم بود، میره وسط
+        centerInsufficientSlides: true, // اگر آیتم کم بود میره وسط
         navigation: { 
             nextEl: `#swiper-${category} .swiper-button-next`, 
             prevEl: `#swiper-${category} .swiper-button-prev` 

@@ -151,7 +151,7 @@ function renderCartItems() {
 
         container.innerHTML += `
             <div class="cart-item">
-                <img src="${item.img}" alt="${item.name}">
+                <img src="${item.img}" alt="${item.name}" loading="lazy">
                 <div class="cart-item-info">
                     <h4>${item.name}</h4>
                     <p>${item.price} تومان <span style="color:var(--primary-blue);">(x${item.quantity})</span></p>
@@ -183,8 +183,3 @@ document.addEventListener('DOMContentLoaded', () => {
     injectCartUI();
     updateCartUI();
 });
-// --- تابع باز و بسته کردن منوی موبایل ---
-function toggleMobileMenu() {
-    const header = document.querySelector('header');
-    header.classList.toggle('active-mobile-menu');
-}

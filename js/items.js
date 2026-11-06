@@ -24,7 +24,7 @@ function renderItems(filter = 'all') {
             <div class="product-card" style="${isOutOfStock ? 'opacity: 0.8;' : ''}">
                 <div class="badge" style="background: var(--cat-${item.category.toLowerCase()}); color: #fff;">${item.category}</div>
                 ${statusBadge}
-                <img src="${item.img}" alt="${item.name}" style="${isOutOfStock ? 'filter: grayscale(100%);' : ''}">
+                <img src="${item.img}" alt="${item.name}" loading="lazy" style="${isOutOfStock ? 'filter: grayscale(100%);' : ''}">
                 <h3 class="${catClass}">${item.name}</h3>
                 <p class="price">${item.price} تومان</p>
                 ${btnHTML}
