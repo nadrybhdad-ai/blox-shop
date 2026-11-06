@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ورود / ثبت‌نام | Blox Shop</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/login.css">
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-box">
+            <div class="tabs">
+                <button class="tab-btn active" onclick="switchTab('login')">ورود</button>
+                <button class="tab-btn" onclick="switchTab('register')">ثبت‌نام</button>
+            </div>
+
+            <!-- فرم ورود -->
+            <form id="loginForm" class="auth-form active-form">
+                <div class="input-group">
+                    <label>نام کاربری یا ایمیل</label>
+                    <input type="text" id="loginUser" required placeholder="Username or Email">
+                </div>
+                <div class="input-group">
+                    <label>رمز عبور</label>
+                    <input type="password" id="loginPass" required placeholder="********">
+                </div>
+                <button type="submit" class="btn-submit">ورود به حساب</button>
+            </form>
+
+            <!-- فرم ثبت‌نام -->
+            <form id="registerForm" class="auth-form">
+                <div class="input-group">
+                    <label>نام کاربری</label>
+                    <input type="text" id="regUser" required placeholder="Username">
+                </div>
+                <div class="input-group">
+                    <label>ایمیل</label>
+                    <input type="email" id="regEmail" required placeholder="you@example.com">
+                </div>
+                <div class="input-group">
+                    <label>رمز عبور</label>
+                    <input type="password" id="regPass" required placeholder="********">
+                </div>
+                <button type="submit" class="btn-submit" style="background:var(--primary-orange);">ساخت حساب</button>
+            </form>
+        </div>
+    </div>
+    <script src="js/app.js"></script>
+    <script src="js/auth.js"></script>
+</body>
+</html>

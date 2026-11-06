@@ -1,0 +1,314 @@
+/* =========================================
+   تنظیمات کلی کانتینر
+========================================= */
+.container { 
+    padding: 40px 5%; 
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.page-title { 
+    text-align: center; 
+    margin-bottom: 30px; 
+    color: var(--primary-orange, #ff8c00); 
+    font-size: 2rem;
+}
+
+/* =========================================
+   بخش هیرو (Hero Section)
+========================================= */
+.hero-layout {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 40px;
+    padding: 40px 0;
+    min-height: 60vh;
+}
+
+/* --- ستون راست (متن) --- */
+.hero-text {
+    flex: 1;
+    max-width: 600px;
+}
+
+.hero-text h1 {
+    font-size: 3rem;
+    line-height: 1.4;
+    margin-bottom: 20px;
+    font-weight: 900;
+    color: var(--text-color, #e0e6ed);
+}
+
+.brand-glow {
+    color: var(--primary-blue, #00d2ff);
+    text-shadow: 0 0 20px rgba(0, 210, 255, 0.6);
+}
+
+.hero-text p {
+    font-size: 1.1rem;
+    color: var(--text-muted, #8b9bb4);
+    line-height: 1.8;
+    margin-bottom: 30px;
+}
+
+/* --- دکمه ها --- */
+.hero-buttons {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 40px;
+}
+
+.btn-primary {
+    background: linear-gradient(45deg, var(--primary-orange, #ff8c00), #ff4d00);
+    color: #fff;
+    padding: 12px 30px;
+    border-radius: 10px;
+    text-decoration: none;
+    font-weight: bold;
+    box-shadow: 0 0 20px rgba(255, 140, 0, 0.4);
+    transition: 0.3s;
+    border: none;
+    cursor: pointer;
+}
+
+.btn-primary:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 0 30px rgba(255, 140, 0, 0.7);
+}
+
+.btn-secondary {
+    background: transparent;
+    color: var(--text-color, #e0e6ed);
+    padding: 12px 30px;
+    border: 2px solid var(--border-color, #2a3b5c);
+    border-radius: 10px;
+    text-decoration: none;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.btn-secondary:hover {
+    border-color: var(--primary-blue, #00d2ff);
+    color: var(--primary-blue, #00d2ff);
+}
+
+/* --- فوتر هیرو (آمار و شبکه‌های اجتماعی) --- */
+/* --- فوتر هیرو (فقط آمار) --- */
+.hero-footer {
+    display: flex;
+    justify-content: center; /* وسط چین شدن */
+    align-items: center;
+    border-top: 1px solid var(--border-color, #2a3b5c);
+    padding-top: 20px;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.social-links {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--text-muted, #8b9bb4);
+    font-size: 0.9rem;
+}
+
+.social-links a {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 40px;
+    height: 40px;
+    background: var(--card-bg, #131c31);
+    border: 1px solid var(--border-color, #2a3b5c);
+    border-radius: 10px;
+    color: var(--text-color, #e0e6ed);
+    text-decoration: none;
+    font-size: 1.2rem;
+    transition: 0.3s;
+}
+
+.social-links a:hover {
+    color: var(--primary-blue, #00d2ff);
+    border-color: var(--primary-blue, #00d2ff);
+    transform: translateY(-3px);
+}
+
+.stats {
+    display: flex;
+    gap: 30px;
+}
+
+.stat-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.stat-item i {
+    font-size: 1.8rem;
+    color: var(--primary-blue, #00d2ff);
+}
+
+.stat-item div {
+    display: flex;
+    flex-direction: column;
+}
+
+.stat-item strong {
+    font-size: 1.2rem;
+    color: var(--text-color, #e0e6ed);
+}
+
+.stat-item span {
+    font-size: 0.85rem;
+    color: var(--text-muted, #8b9bb4);
+}
+
+/* --- ستون چپ (کارت های ویژگی) --- */
+.hero-features {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    max-width: 450px;
+}
+
+.feature-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: var(--card-bg, #131c31);
+    border: 1px solid var(--border-color, #2a3b5c);
+    padding: 20px;
+    border-radius: 15px;
+    transition: 0.3s;
+}
+
+.feature-card:hover {
+    transform: translateX(-10px);
+    border-color: var(--primary-blue, #00d2ff);
+    box-shadow: 0 5px 15px rgba(0, 210, 255, 0.1);
+}
+
+.feature-text h3 {
+    font-size: 1.2rem;
+    margin-bottom: 5px;
+    color: var(--text-color, #e0e6ed);
+}
+
+.feature-text p {
+    font-size: 0.9rem;
+    color: var(--text-muted, #8b9bb4);
+}
+
+/* آیکون ها */
+.icon-box {
+    width: 60px;
+    height: 60px;
+    border-radius: 15px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.8rem;
+    flex-shrink: 0;
+}
+
+.purple-box {
+    background: rgba(153, 51, 255, 0.15);
+    color: #9933ff;
+}
+
+.orange-box {
+    background: rgba(255, 140, 0, 0.15);
+    color: var(--primary-orange, #ff8c00);
+}
+
+.blue-box {
+    background: rgba(0, 210, 255, 0.15);
+    color: var(--primary-blue, #00d2ff);
+}
+
+/* =========================================
+   استایل اسلایدرها (Swiper)
+========================================= */
+.slider-section { 
+    margin-bottom: 50px; 
+}
+
+.slider-section h3 { 
+    margin-bottom: 15px; 
+    font-size: 1.5rem; 
+    border-bottom: 2px solid var(--border-color, #2a3b5c); 
+    padding-bottom: 5px; 
+}
+
+.swiper { 
+    width: 100%; 
+    padding: 10px 0 40px 0; 
+}
+
+.swiper-slide { 
+    background: var(--card-bg, #131c31); 
+    border: 1px solid var(--border-color, #2a3b5c); 
+    border-radius: 15px; 
+    text-align: center; 
+    padding: 15px; 
+    height: auto; 
+    transition: 0.3s;
+    width: 220px; /* عرض ثابت هر کارت */
+    box-sizing: border-box;
+}
+
+.swiper-slide:hover {
+    border-color: var(--primary-blue, #00d2ff);
+    transform: translateY(-5px);
+}
+
+.swiper-slide img { 
+    width: 100px; 
+    height: 100px; 
+    object-fit: contain; 
+    margin-bottom: 10px; 
+}
+
+.swiper-button-next, .swiper-button-prev { 
+    color: var(--primary-blue, #00d2ff) !important; 
+    transform: scale(0.7); 
+}
+
+/* =========================================
+   ریسپانسیو (موبایل و تبلت)
+========================================= */
+@media (max-width: 900px) {
+    .hero-layout {
+        flex-direction: column;
+        text-align: center;
+        gap: 40px;
+    }
+    
+    .hero-text {
+        max-width: 100%;
+    }
+
+    .hero-text h1 {
+        font-size: 2.2rem;
+    }
+
+    .hero-buttons {
+        justify-content: center;
+    }
+
+       .hero-footer {
+        justify-content: center;
+    }
+
+    .hero-features {
+        max-width: 100%;
+        width: 100%;
+    }
+
+    .feature-card:hover {
+        transform: translateY(-5px); 
+    }
+}
