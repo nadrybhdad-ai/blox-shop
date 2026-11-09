@@ -480,3 +480,38 @@ nav ul li a:hover, nav ul li a.active { color: var(--primary-orange); }
         font-size: 1rem;
     }
 }
+/* =========================================
+   اصلاح چیدمان هدر در دسکتاپ
+========================================= */
+@media (min-width: 769px) {
+    header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .sidebar-content {
+        display: contents; /* اجازه میده منو و دکمه‌ها مستقیماً داخل هدر قرار بگیرن */
+    }
+
+    nav {
+        margin-right: 30px;
+        margin-left: auto; /* هل دادن دکمه‌های ورود و تم به سمت چپ */
+    }
+
+    nav ul {
+        display: flex;
+        gap: 20px;
+        align-items: center;
+    }
+
+    .header-actions {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .close-sidebar-btn, .menu-overlay {
+        display: none !important; /* مخفی کردن دکمه‌های موبایل در دسکتاپ */
+    }
+}
