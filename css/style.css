@@ -515,3 +515,13 @@ nav ul li a:hover, nav ul li a.active { color: var(--primary-orange); }
         display: none !important; /* مخفی کردن دکمه‌های موبایل در دسکتاپ */
     }
 }
+/* =========================================
+   مخفی کردن سبد خرید هنگام باز شدن منو
+========================================= */
+header.active-mobile-menu ~ #cart-floating-btn {
+    opacity: 0;
+    visibility: hidden;
+    transform: scale(0); /* افکت کوچک شدن برای زیبایی */
+    transition: 0.3s ease;
+    pointer-events: none; /* جلوگیری از کلیک روی آن در حالت مخفی */
+}
