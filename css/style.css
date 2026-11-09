@@ -261,46 +261,222 @@ nav ul li a:hover, nav ul li a.active { color: var(--primary-orange); }
 /* =========================================
    تنظیمات ریسپانسیو برای هدر (موبایل و تبلت)
 ========================================= */
+/* =========================================
+   دکمه منوی موبایل و لایه تاریک
+========================================= */
+.mobile-menu-btn {
+    display: none; /* در کامپیوتر مخفی است */
+    background: transparent;
+    border: none;
+    color: var(--text-color);
+    font-size: 1.8rem;
+    cursor: pointer;
+    z-index: 1001; /* بالاتر از سایدبار */
+}
+
+.menu-overlay {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(4px);
+    z-index: 999;
+}
+
+.close-sidebar-btn {
+    display: none;
+    background: transparent;
+    border: none;
+    color: var(--danger);
+    font-size: 1.5rem;
+    cursor: pointer;
+    align-self: flex-start; /* قرارگیری در گوشه */
+    margin-bottom: 20px;
+}
+
+.sidebar-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex: 1;
+}
+
+/* =========================================
+   تنظیمات ریسپانسیو برای موبایل (منوی کناری)
+========================================= */
+/* =========================================
+   استایل دکمه خروج (در دسکتاپ و موبایل)
+========================================= */
+.btn-logout {
+    background: linear-gradient(45deg, #ff3333, #cc0000) !important;
+    color: white;
+    padding: 8px 15px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    font-family: inherit;
+    font-weight: bold;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 4px 15px rgba(255, 51, 51, 0.3);
+    transition: 0.3s;
+    text-decoration: none;
+}
+
+.btn-logout:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(255, 51, 51, 0.6);
+}
+
+/* =========================================
+   دکمه منوی موبایل و لایه تاریک
+========================================= */
+.mobile-menu-btn {
+    display: none; /* در کامپیوتر مخفی است */
+    background: transparent;
+    border: none;
+    color: var(--text-color);
+    font-size: 1.8rem;
+    cursor: pointer;
+    z-index: 1001;
+}
+
+.menu-overlay {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(4px);
+    z-index: 999;
+}
+
+.close-sidebar-btn {
+    display: none;
+    background: transparent;
+    border: none;
+    color: var(--danger);
+    font-size: 1.5rem;
+    cursor: pointer;
+    align-self: flex-end;
+    margin-bottom: 20px;
+}
+
+.sidebar-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex: 1;
+}
+
+/* =========================================
+   تنظیمات ریسپانسیو برای موبایل (منوی کناری از چپ)
+========================================= */
 @media (max-width: 768px) {
     header {
         padding: 15px;
-        flex-wrap: wrap; /* اجازه میدهد منو به خط بعد برود */
+        flex-wrap: nowrap; 
     }
 
     .logo img {
-        height: 40px; /* کوچک کردن لوگو در موبایل */
+        height: 40px;
     }
 
     .mobile-menu-btn {
-        display: block; /* نمایش دکمه همبرگری */
+        display: block; 
     }
 
-    /* مخفی کردن منوها در حالت عادی */
-    nav, .header-actions {
-        display: none;
+    /* تبدیل محتوا به سایدبار */
+    .sidebar-content {
+        position: fixed;
+        top: 0;
+        left: -300px; /* تغییر: شروع از سمت چپ */
+        width: 280px;
+        height: 100vh;
+        background: var(--card-bg);
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: stretch;
+        padding: 20px;
+        transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1); /* تغییر: انیمیشن از چپ */
+        z-index: 1000;
+        border-right: 2px solid var(--primary-blue); /* تغییر: خط سمت راست سایدبار */
+        box-shadow: 10px 0 30px rgba(0, 0, 0, 0.5); /* تغییر: سایه به سمت راست */
+        overflow-y: auto;
     }
 
-    /* وقتی کلاس active-mobile-menu به هدر اضافه شود، منوها نمایش داده می‌شوند */
-    header.active-mobile-menu nav {
+    /* وقتی منو باز می‌شود */
+    header.active-mobile-menu .sidebar-content {
+        left: 0; /* تغییر: باز شدن از سمت چپ */
+    }
+
+    header.active-mobile-menu .menu-overlay {
         display: block;
-        width: 100%;
-        order: 3; /* قرارگیری بعد از لوگو و دکمه */
-        margin-top: 15px;
-        border-top: 1px solid var(--border-color);
-        padding-top: 15px;
     }
 
-    header.active-mobile-menu nav ul {
+    .close-sidebar-btn {
+        display: block; 
+    }
+
+    /* استایل لینک‌های منو در موبایل */
+    nav {
+        width: 100%;
+        margin-bottom: 30px;
+    }
+
+    nav ul {
         flex-direction: column;
         gap: 15px;
-        text-align: center;
+        width: 100%;
     }
 
-    header.active-mobile-menu .header-actions {
-        display: flex;
+    nav ul li {
         width: 100%;
-        order: 4;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    nav ul li a {
+        display: block;
+        padding: 12px 10px;
+        font-size: 1.1rem;
+        text-align: right;
+    }
+
+    /* استایل بخش ادمین و خروج در موبایل */
+    .header-actions {
+        width: 100%;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 15px;
+        margin-top: auto; 
+        padding-top: 20px;
+        border-top: 1px dashed var(--border-color);
+    }
+
+    .theme-toggle {
+        align-self: flex-end; 
+        margin-bottom: 10px;
+    }
+
+    #auth-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        background: rgba(0, 0, 0, 0.2);
+        padding: 15px;
+        border-radius: 12px;
+        border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    #auth-container span {
+        font-size: 1rem;
+        margin-bottom: 15px;
+    }
+
+    #auth-container .btn-logout {
+        width: 100%;
         justify-content: center;
-        margin-top: 15px;
+        padding: 12px;
+        font-size: 1rem;
     }
 }

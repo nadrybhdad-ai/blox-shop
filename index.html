@@ -4,13 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Blox Shop | خانه</title>
-    <!-- لینک CSS اسلایدر (محلی) -->
     <link rel="stylesheet" href="css/swiper-bundle.min.css" />
-    
-    <!-- لینک آیکون ها -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <!-- لینک استایل اصلی و صفحه اصلی -->
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/home.css">
 </head>
@@ -23,28 +18,29 @@
             <i class="fas fa-bars"></i>
         </button>
 
-        <nav>
-            <ul>
-                <!-- لینک active رو بر اساس صفحه تنظیم کنید (مثلا در items.html روی آیتم ها باشه) -->
-                <li><a href="index.html">خانه</a></li>
-                <li><a href="items.html">آیتم‌ها</a></li>
-                <li><a href="services.html">خدمات</a></li>
-                <li><a href="contact.html">تماس</a></li>
-            </ul>
-        </nav>
+        <!-- لایه تاریک پشت منو (برای بستن منو با کلیک بیرون از آن) -->
+        <div class="menu-overlay" onclick="toggleMobileMenu()"></div>
         
-        <div class="header-actions">
-            <button class="theme-toggle">☀️</button>
-            <div id="auth-container"><a href="login.html" class="btn">ورود / ثبت‌نام</a></div>
+        <!-- سایدبار (منوی کناری) -->
+        <div class="sidebar-content">
+            <!-- دکمه بستن منو (داخل سایدبار) -->
+            <button class="close-sidebar-btn" onclick="toggleMobileMenu()">
+                <i class="fas fa-times"></i>
+            </button>
+
+            <nav>
+                <ul></ul> <!-- لینک‌ها توسط JS ساخته می‌شوند -->
+            </nav>
+            
+            <div class="header-actions">
+                <button class="theme-toggle">☀️</button>
+                <div id="auth-container"></div>
+            </div>
         </div>
     </header>
 
     <main class="container">
-        
-        <!-- بخش هیرو (بنر اصلی) -->
         <section class="hero-layout">
-            
-            <!-- ستون راست: متن و دکمه ها -->
             <div class="hero-text">
                 <h1>خاص‌ترین‌ها با <br><span class="brand-glow">Blox Shop</span></h1>
                 <p>مرجع تخصصی خرید میوه‌های کمیاب، آیتم‌های بازی و خدمات حرفه‌ای در Blox Fruits. با تحویل سریع، پرداخت امن و ضمانت بازگشت وجه.</p>
@@ -53,20 +49,19 @@
                     <a href="services.html" class="btn-secondary">مشاهده خدمات</a>
                 </div>
                 
-                               <!-- بخش آمار -->
                 <div class="hero-footer">
                     <div class="stats" style="width: 100%; justify-content: center;">
                         <div class="stat-item">
                             <i class="fas fa-shopping-bag"></i>
                             <div>
-                                <strong id="stat-orders-display">+۲,۸۶۶</strong>
+                                <strong id="stat-orders-display"></strong>
                                 <span>خرید موفق</span>
                             </div>
                         </div>
                         <div class="stat-item">
                             <i class="fas fa-star" style="color: var(--primary-orange);"></i>
                             <div>
-                                <strong id="stat-rating-display">۴.۸ / ۵</strong>
+                                <strong id="stat-rating-display"></strong>
                                 <span>امتیاز رضایت</span>
                             </div>
                         </div>
@@ -74,84 +69,37 @@
                 </div>
             </div>
 
-            <!-- ستون چپ: کارت های ویژگی -->
             <div class="hero-features">
                 <div class="feature-card">
                     <div class="feature-text">
                         <h3>پشتیبانی سریع</h3>
                         <p>۷ روز هفته، حتی روزهای تعطیل</p>
                     </div>
-                    <div class="icon-box purple-box">
-                        <i class="fas fa-headset"></i>
-                    </div>
+                    <div class="icon-box purple-box"><i class="fas fa-headset"></i></div>
                 </div>
-
                 <div class="feature-card">
                     <div class="feature-text">
                         <h3>خرید آسان</h3>
                         <p>پرداخت و تحویل در چند دقیقه</p>
                     </div>
-                    <div class="icon-box orange-box">
-                        <i class="fas fa-shopping-cart"></i>
-                    </div>
+                    <div class="icon-box orange-box"><i class="fas fa-shopping-cart"></i></div>
                 </div>
-
                 <div class="feature-card">
                     <div class="feature-text">
                         <h3>بازگشت وجه</h3>
                         <p>ضمانت بازگشت وجه بدون قید و شرط</p>
                     </div>
-                    <div class="icon-box blue-box">
-                        <i class="fas fa-shield-alt"></i>
-                    </div>
+                    <div class="icon-box blue-box"><i class="fas fa-shield-alt"></i></div>
                 </div>
             </div>
-
         </section>
 
-        <!-- بخش اسلایدرها -->
+        <!-- بخش اسلایدرها (داینامیک) -->
         <h2 class="page-title" style="margin-top: 60px;">محصولات ما</h2>
-
-<div class="slider-section">
-    <h3 class="text-service">Level Up (لول اپ)</h3>
-    <div class="swiper mySwiper" id="swiper-Service">
-        <div class="swiper-wrapper"></div>
-        <div class="swiper-button-next"></div>
-        <div class="swiper-button-prev"></div>
-    </div>
-</div>
-
-        <div class="slider-section">
-            <h3 class="text-mythical">Mythical</h3>
-            <div class="swiper mySwiper" id="swiper-Mythical">
-                <div class="swiper-wrapper"></div>
-                <div class="swiper-button-next"></div>
-                <div class="swiper-button-prev"></div>
-            </div>
-        </div>
-
-        <div class="slider-section">
-            <h3 class="text-legendary">Legendary</h3>
-            <div class="swiper mySwiper" id="swiper-Legendary">
-                <div class="swiper-wrapper"></div>
-                <div class="swiper-button-next"></div>
-                <div class="swiper-button-prev"></div>
-            </div>
-        </div>
-
-        <div class="slider-section">
-            <h3 class="text-rare">Rare</h3>
-            <div class="swiper mySwiper" id="swiper-Rare">
-                <div class="swiper-wrapper"></div>
-                <div class="swiper-button-next"></div>
-                <div class="swiper-button-prev"></div>
-            </div>
-        </div>
-
+        <div id="home-sliders-container"></div>
     </main>
-<script src="js/swiper-bundle.min.js"></script>
-    
-    <!-- اسکریپت‌های خودتون -->
+
+    <script src="js/swiper-bundle.min.js"></script>
     <script src="js/app.js"></script>
     <script src="js/home.js"></script>
 </body>

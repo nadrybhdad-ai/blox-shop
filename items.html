@@ -16,38 +16,34 @@
             <i class="fas fa-bars"></i>
         </button>
 
-        <nav>
-            <ul>
-                <!-- لینک active رو بر اساس صفحه تنظیم کنید (مثلا در items.html روی آیتم ها باشه) -->
-                <li><a href="index.html">خانه</a></li>
-                <li><a href="items.html">آیتم‌ها</a></li>
-                <li><a href="services.html">خدمات</a></li>
-                <li><a href="contact.html">تماس</a></li>
-            </ul>
-        </nav>
+        <!-- لایه تاریک پشت منو (برای بستن منو با کلیک بیرون از آن) -->
+        <div class="menu-overlay" onclick="toggleMobileMenu()"></div>
         
-        <div class="header-actions">
-            <button class="theme-toggle">☀️</button>
-            <div id="auth-container"><a href="login.html" class="btn">ورود / ثبت‌نام</a></div>
+        <!-- سایدبار (منوی کناری) -->
+        <div class="sidebar-content">
+            <!-- دکمه بستن منو (داخل سایدبار) -->
+            <button class="close-sidebar-btn" onclick="toggleMobileMenu()">
+                <i class="fas fa-times"></i>
+            </button>
+
+            <nav>
+                <ul></ul> <!-- لینک‌ها توسط JS ساخته می‌شوند -->
+            </nav>
+            
+            <div class="header-actions">
+                <button class="theme-toggle">☀️</button>
+                <div id="auth-container"></div>
+            </div>
         </div>
     </header>
 
     <main class="container">
         <h2 class="page-title">فروشگاه میوه‌ها</h2>
         
-        <div class="filters">
-            <button class="filter-btn active" data-filter="all">همه</button>
-            <button class="filter-btn mythical" data-filter="Mythical">Mythical</button>
-            <button class="filter-btn legendary" data-filter="Legendary">Legendary</button>
-            <button class="filter-btn rare" data-filter="Rare">Rare</button>
-            <button class="filter-btn uncommon" data-filter="Uncommon">Uncommon</button>
-            <button class="filter-btn common" data-filter="Common">Common</button>
-            <button class="filter-btn service" data-filter="Service">Level Up</button>
-        </div>
+        <!-- فیلترها به صورت داینامیک ساخته می‌شوند -->
+        <div class="filters" id="filters-container"></div>
 
-        <div class="grid" id="items-grid">
-            <!-- جاوااسکریپت آیتم‌ها را اینجا رندر می‌کند -->
-        </div>
+        <div class="grid" id="items-grid"></div>
     </main>
 
     <script src="js/app.js"></script>

@@ -1,0 +1,203 @@
+/* css/services.css */
+
+/* بخش معرفی خدمات در صفحه اصلی */
+.services-banner {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+    background: var(--card-bg);
+    padding: 30px;
+    border-radius: 15px;
+    border: 1px solid var(--border-color);
+    text-align: center;
+}
+
+.service-mini-card {
+    flex: 1;
+    min-width: 150px;
+    padding: 15px;
+    border-radius: 10px;
+    background: var(--bg-color);
+    transition: 0.3s;
+}
+
+.service-mini-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0, 210, 255, 0.2);
+}
+
+.service-mini-card i {
+    font-size: 2rem;
+    color: var(--primary-orange);
+    margin-bottom: 10px;
+}
+
+.service-mini-card h3 {
+    font-size: 1.1rem;
+    margin-bottom: 5px;
+    color: var(--text-color);
+}
+
+.service-mini-card p {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+}
+
+/* کارت‌های توضیحات در صفحه خدمات */
+.services-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 25px;
+    margin-bottom: 50px;
+}
+
+.service-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 15px;
+    padding: 25px;
+    text-align: center;
+    transition: 0.3s;
+    position: relative;
+    overflow: hidden;
+}
+
+.service-card:hover {
+    border-color: var(--primary-blue);
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0, 210, 255, 0.15);
+}
+
+.service-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    background: var(--primary-blue);
+    transform: scaleX(0);
+    transition: transform 0.3s;
+    transform-origin: right;
+}
+
+.service-card:hover::before {
+    transform: scaleX(1);
+    transform-origin: left;
+}
+
+.service-card i {
+    font-size: 2.5rem;
+    color: var(--primary-blue);
+    margin-bottom: 15px;
+    text-shadow: 0 0 10px rgba(0, 210, 255, 0.5);
+}
+
+.service-card h3 {
+    font-size: 1.3rem;
+    margin-bottom: 10px;
+    color: var(--primary-orange);
+}
+
+.service-card p {
+    color: var(--text-muted);
+    font-size: 0.95rem;
+    line-height: 1.6;
+}
+
+/* بخش خرید خدمات */
+.grid {
+    display: grid;
+    /* استفاده از auto-fill به جای auto-fit تا کارت‌ها کشیده نشن */
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 30px;
+}
+
+.product-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 15px;
+    padding: 20px;
+    text-align: center;
+    position: relative;
+    transition: 0.3s;
+    max-width: 300px; /* جلوگیری از پهن شدن بیش از حد کارت */
+    margin: 0 auto;
+    width: 100%;
+}
+
+.product-card:hover {
+    transform: translateY(-10px);
+    border-color: var(--primary-blue);
+    box-shadow: 0 10px 20px rgba(0, 210, 255, 0.2);
+}
+
+.product-card img {
+    width: 120px;
+    height: 120px;
+    object-fit: contain;
+    margin-bottom: 15px;
+}
+
+.product-card h3 {
+    margin-bottom: 10px;
+    font-size: 1.2rem;
+    color: var(--cat-service);
+}
+
+.price {
+    color: var(--primary-blue);
+    font-weight: bold;
+    font-size: 1.1rem;
+    margin-bottom: 15px;
+}
+
+.btn-buy {
+    width: 100%;
+    background: transparent;
+    border: 2px solid var(--primary-blue);
+    color: var(--primary-blue);
+    padding: 10px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.btn-buy:hover {
+    background: var(--primary-blue);
+    color: var(--bg-color);
+}
+
+/* استایل برچسب‌ها (که باعث به هم ریختگی شده بود) */
+.badge {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: var(--primary-blue);
+    color: #000;
+    padding: 4px 10px;
+    border-radius: 5px;
+    font-size: 0.8rem;
+    font-weight: bold;
+    z-index: 2;
+}
+/* استایل عکس کارت‌های خدمات */
+.service-card-img {
+    width: 80px;
+    height: 80px;
+    object-fit: contain;
+    margin-bottom: 15px;
+    border-radius: 12px;
+    background: rgba(0, 0, 0, 0.2);
+    padding: 5px;
+    border: 1px solid var(--primary-blue);
+    box-shadow: 0 0 15px rgba(0, 210, 255, 0.3);
+    transition: 0.3s;
+}
+
+.service-card:hover .service-card-img {
+    transform: scale(1.1) translateY(-5px);
+    box-shadow: 0 0 25px rgba(0, 210, 255, 0.6);
+}
