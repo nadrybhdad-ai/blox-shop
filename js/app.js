@@ -247,3 +247,30 @@ function toggleMobileMenu() {
         header.classList.toggle('active-mobile-menu');
     }
 }
+// =========================================
+// ۷. اعمال تم مناسبت‌ها و بنر
+// =========================================
+document.addEventListener('DOMContentLoaded', () => {
+    const seasonTheme = localStorage.getItem('bloxSeasonTheme') || 'default';
+    
+    if (seasonTheme !== 'default') {
+        // اضافه کردن کلاس تم به بادی
+        document.body.classList.add(`theme-${seasonTheme}`);
+        
+        // متن بنرهای مناسبتی
+        const banners = {
+            'halloween': '🎃 جشنواره هالووین! تخفیف‌های ویژه به مناسبت این روز 🎃',
+            'valentine': '❤️ روز ولنتاین مبارک! ارسال هدیه برای عشق بازی ❤️',
+            'christmas': '🎄 کریسمس مبارک! برف و جشنواره تخفیف زمستانی 🎄',
+            'nowruz': '🌸 عید نوروز مبارک! سالی پر از برد و پیروزی 🌸'
+        };
+        
+        if (banners[seasonTheme]) {
+            const bannerDiv = document.createElement('div');
+            bannerDiv.className = `season-banner banner-${seasonTheme}`;
+            bannerDiv.innerHTML = banners[seasonTheme];
+            // اضافه کردن بنر به بالاترین نقطه صفحه
+            document.body.insertBefore(bannerDiv, document.body.firstChild);
+        }
+    }
+});

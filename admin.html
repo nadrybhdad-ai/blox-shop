@@ -57,6 +57,19 @@
                     <button onclick="saveStats()" class="btn" style="background:var(--primary-orange); width:100%;">ذخیره آمار</button>
                 </div>
 
+                                <!-- تنظیمات تم مناسبت‌ها -->
+                <div class="admin-card" style="border-top-color: #9b59b6; margin-top: 20px;">
+                    <h3><i class="fas fa-magic" style="color:#9b59b6;"></i> تم مناسبت‌ها</h3>
+                    <select id="seasonThemeSelect">
+                        <option value="default">تم عادی (پیش‌فرض)</option>
+                        <option value="halloween">هالووین 🎃</option>
+                        <option value="valentine">ولنتاین ❤️</option>
+                        <option value="christmas">کریسمس 🎄</option>
+                        <option value="nowruz">نوروز 🌸</option>
+                    </select>
+                    <button onclick="saveSeasonTheme()" class="btn" style="background:#9b59b6; width:100%; margin-top:10px;">اعمال تم مناسبت</button>
+                </div>
+
                 <!-- مدیریت دسته‌بندی‌ها -->
                 <div class="admin-card" style="border-top-color: var(--primary-blue);">
                     <h3><i class="fas fa-layer-group" style="color:var(--primary-blue);"></i> مدیریت دسته‌بندی‌ها</h3>

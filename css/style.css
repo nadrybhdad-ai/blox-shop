@@ -525,3 +525,78 @@ header.active-mobile-menu ~ #cart-floating-btn {
     transition: 0.3s ease;
     pointer-events: none; /* جلوگیری از کلیک روی آن در حالت مخفی */
 }
+/* =========================================
+   تم‌های مناسبت‌ها (Event Themes)
+   ========================================= */
+
+/* ۱. تم هالووین (نارنجی، بنفش، تیره) */
+body.theme-halloween {
+    --bg-color: #150d1c;
+    --card-bg: #22142b;
+    --primary-blue: #ff7b00; /* نارنجی */
+    --primary-orange: #a855f7; /* بنفش */
+    --border-color: #3d2352;
+}
+.banner-halloween {
+    background: linear-gradient(90deg, #ff7b00, #a855f7);
+    color: #fff;
+    text-shadow: 0 0 10px rgba(0,0,0,0.5);
+}
+
+/* ۲. تم ولنتاین (صورتی، قرمز، تیره) */
+body.theme-valentine {
+    --bg-color: #1c0a12;
+    --card-bg: #2e111d;
+    --primary-blue: #ff3366; /* قرمز-صورتی */
+    --primary-orange: #ff99cc; /* صورتی روشن */
+    --border-color: #4d1c30;
+}
+.banner-valentine {
+    background: linear-gradient(90deg, #ff3366, #ff99cc);
+    color: #fff;
+}
+
+/* ۳. تم کریسمس (قرمز، سبز، تیره) */
+body.theme-christmas {
+    --bg-color: #0a1a12;
+    --card-bg: #112b1e;
+    --primary-blue: #e74c3c; /* قرمز */
+    --primary-orange: #2ecc71; /* سبز */
+    --border-color: #1e4a34;
+}
+.banner-christmas {
+    background: linear-gradient(90deg, #e74c3c, #2ecc71);
+    color: #fff;
+}
+
+/* ۴. تم نوروز (سبز، طلایی، فیروزه‌ای) */
+body.theme-nowruz {
+    --bg-color: #0a1a1a;
+    --card-bg: #112b2a;
+    --primary-blue: #00d2ff; /* فیروزه‌ای */
+    --primary-orange: #2ecc71; /* سبز عیدانه */
+    --border-color: #1e4a48;
+}
+.banner-nowruz {
+    background: linear-gradient(90deg, #2ecc71, #00d2ff);
+    color: #fff;
+}
+
+/* استایل مشترک بنرها */
+.season-banner {
+    width: 100%;
+    text-align: center;
+    padding: 12px;
+    font-weight: bold;
+    font-size: 1.1rem;
+    font-family: inherit;
+    z-index: 9999;
+    position: relative;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    animation: slideDownBanner 0.5s ease;
+}
+
+@keyframes slideDownBanner {
+    from { transform: translateY(-100%); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}

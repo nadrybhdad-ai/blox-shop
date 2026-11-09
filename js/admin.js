@@ -469,6 +469,24 @@ function renderAdminSliders() {
 }
 
 // =========================================
+// ۶. مدیریت تم مناسبت‌ها (جدید)
+// =========================================
+function loadSeasonTheme() {
+    const theme = localStorage.getItem('bloxSeasonTheme') || 'default';
+    const select = document.getElementById('seasonThemeSelect');
+    if (select) select.value = theme;
+}
+
+function saveSeasonTheme() {
+    const select = document.getElementById('seasonThemeSelect');
+    if (!select) return;
+    
+    const theme = select.value;
+    localStorage.setItem('bloxSeasonTheme', theme);
+    alert('تم سایت با موفقیت تغییر کرد! صفحه را رفرش کنید تا تغییرات را ببینید.');
+}
+
+// =========================================
 // اجرای اولیه تمام توابع بعد از لود صفحه
 // =========================================
 document.addEventListener('DOMContentLoaded', () => {
@@ -477,4 +495,5 @@ document.addEventListener('DOMContentLoaded', () => {
     renderAdminCategories();
     renderAdminSliders();
     renderAdminServices();
+    loadSeasonTheme(); // <--- اجرای تابع لود تم مناسبت
 });
