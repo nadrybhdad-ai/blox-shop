@@ -9,8 +9,8 @@ function renderHomeSliders() {
     container.innerHTML = '';
 
     categories.forEach(category => {
-        // اسلایدر "خدمات" را در صفحه خانه نشان نمی‌دهیم
-        if (category.id === 'Service') return;
+        // اسلایدر "خدمات" را در صفحه خانه نشان نمی‌دهیم (case-insensitive)
+        if (category.id.toLowerCase() === 'service') return;
 
         const filtered = homeItems.filter(i => i.category === category.id);
         if (filtered.length === 0) return; 
@@ -37,7 +37,7 @@ function renderHomeSliders() {
 
             const btnHTML = isOutOfStock 
                 ? `<button disabled style="margin-top:10px; background:transparent; border:1px solid var(--text-muted); color:var(--text-muted); padding:5px 10px; border-radius:5px; cursor:not-allowed;">افزودن به سبد</button>`
-                : `<button onclick="addToCart(${item.id}, '${item.name}', '${item.price}', '${item.img}')" style="margin-top:10px; background:transparent; border:1px solid var(--primary-blue); color:var(--primary-blue); padding:5px 10px; border-radius:5px; cursor:pointer; transition:0.3s;">افزودن به سبد</button>`;
+                : `<button onclick="addToCart(${item.id})" style="margin-top:10px; background:transparent; border:1px solid var(--primary-blue); color:var(--primary-blue); padding:5px 10px; border-radius:5px; cursor:pointer; transition:0.3s;">افزودن به سبد</button>`;
 
             wrapper.innerHTML += `
                 <div class="swiper-slide" style="${isOutOfStock ? 'opacity: 0.8;' : ''}">
@@ -63,13 +63,11 @@ function renderHomeServicesBanner() {
 
     const serviceDescs = JSON.parse(localStorage.getItem('bloxServices')) || [];
     
-    // دکمه "مشاهده تمام خدمات" را نگه می‌داریم
     const viewAllBtn = banner.querySelector('a');
 
     if (serviceDescs.length > 0) {
-        banner.innerHTML = ''; // پاک کردن کارت‌های ثابت قبلی
+        banner.innerHTML = '';
         
-        // نمایش ۴ خدمت اول
         serviceDescs.slice(0, 4).forEach(service => {
             banner.innerHTML += `
                 <div class="service-mini-card">

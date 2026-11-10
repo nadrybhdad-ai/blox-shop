@@ -1,58 +1,44 @@
 // js/admin.js
 
-// --- بررسی لاگین ادمین ---
 if (localStorage.getItem('bloxAdminLoggedIn') !== 'true') {
-    alert('ابتدا باید به عنوان ادمین وارد شوید!');
     window.location.href = 'login.html';
 }
 
-// متغیرهای نگهدارنده عکس‌های آپلود شده
 let currentImageBase64 = '';
 let currentServiceImageBase64 = '';
+let adminSwipers = [];
 
 // =========================================
 // ۱. مدیریت دسته‌بندی‌ها
 // =========================================
 function addCategory() {
-    const nameEl = document.getElementById('newCatName');
-    const colorEl = document.getElementById('newCatColor');
-    if (!nameEl || !colorEl) return;
-
-    const name = nameEl.value.trim();
-    const color = colorEl.value;
-
-    if (!name) { alert('نام دسته‌بندی الزامی است!'); return; }
+    const name = document.getElementById('newCatName').value.trim();
+    const color = document.getElementById('newCatColor').value;
+    if (!name) { showToast('نام دسته‌بندی الزامی است!', 'error'); return; }
     
     const id = name.replace(/\s+/g, '-').toLowerCase(); 
     let categories = getCategories();
-
-    if (categories.find(c => c.id === id)) {
-        alert('این دسته‌بندی قبلاً وجود دارد!');
+    if (categories.find(c => c.id.toLowerCase() === id.toLowerCase())) {
+        showToast('این دسته‌بندی وجود دارد!', 'error');
         return;
     }
 
     categories.push({ id, name, color });
-    try {
-        saveCategories(categories);
-        nameEl.value = '';
-        updateCategoryDropdown();
-        renderAdminCategories();
-        renderAdminSliders();
-        alert('دسته‌بندی جدید با موفقیت اضافه شد!');
-    } catch (error) {
-        alert('حافظه مرورگر پر شده است! چند آیتم قدیمی را حذف کنید.');
-    }
+    saveCategories(categories);
+    document.getElementById('newCatName').value = '';
+    updateCategoryDropdown();
+    renderAdminCategories();
+    renderAdminSliders();
+    showToast('دسته‌بندی جدید اضافه شد!', 'success');
 }
 
 function deleteCategory(id) {
-    if (id === 'service' || id === 'Service') {
-        alert('دسته‌بندی خدمات قابل حذف نیست!');
+    if (id.toLowerCase() === 'service') {
+        showToast('دسته‌بندی خدمات قابل حذف نیست!', 'error');
         return;
     }
-    if (confirm(`آیا از حذف دسته‌بندی "${id}" مطمئن هستید؟ (آیتم‌های داخل آن حذف نمی‌شوند اما نمایش داده نمی‌شوند)`)) {
-        let categories = getCategories();
-        categories = categories.filter(c => c.id !== id);
-        saveCategories(categories);
+    if (confirm(`حذف دسته‌بندی "${id}"؟`)) {
+        saveCategories(getCategories().filter(c => c.id !== id));
         updateCategoryDropdown();
         renderAdminCategories();
         renderAdminSliders();
@@ -62,13 +48,8 @@ function deleteCategory(id) {
 function moveCategory(id, direction) {
     let categories = getCategories();
     const index = categories.findIndex(c => c.id === id);
-    
-    if (direction === 'up' && index > 0) {
-        [categories[index], categories[index - 1]] = [categories[index - 1], categories[index]];
-    } else if (direction === 'down' && index < categories.length - 1) {
-        [categories[index], categories[index + 1]] = [categories[index + 1], categories[index]];
-    }
-    
+    if (direction === 'up' && index > 0) [categories[index], categories[index - 1]] = [categories[index - 1], categories[index]];
+    else if (direction === 'down' && index < categories.length - 1) [categories[index], categories[index + 1]] = [categories[index + 1], categories[index]];
     saveCategories(categories);
     renderAdminCategories();
     renderAdminSliders();
@@ -77,34 +58,27 @@ function moveCategory(id, direction) {
 function renderAdminCategories() {
     const list = document.getElementById('admin-categories-list');
     if (!list) return;
-    const categories = getCategories();
     list.innerHTML = '';
-
-    categories.forEach((cat, index) => {
+    getCategories().forEach((cat, index) => {
         const upStyle = index === 0 ? 'opacity: 0.3; pointer-events: none;' : '';
-        const downStyle = index === categories.length - 1 ? 'opacity: 0.3; pointer-events: none;' : '';
-
+        const downStyle = index === getCategories().length - 1 ? 'opacity: 0.3; pointer-events: none;' : '';
         list.innerHTML += `
             <div class="admin-item-row" style="padding: 8px; display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--border-color);">
                 <div><strong style="color:${cat.color};">${cat.name}</strong></div>
                 <div style="display:flex; gap:5px;">
-                    <button onclick="moveCategory('${cat.id}', 'up')" style="background:var(--text-muted); color:#fff; border:none; padding:5px; border-radius:5px; cursor:pointer; ${upStyle}"><i class="fas fa-arrow-up"></i></button>
-                    <button onclick="moveCategory('${cat.id}', 'down')" style="background:var(--text-muted); color:#fff; border:none; padding:5px; border-radius:5px; cursor:pointer; ${downStyle}"><i class="fas fa-arrow-down"></i></button>
-                    <button onclick="deleteCategory('${cat.id}')" style="background:var(--danger); color:#fff; border:none; padding:5px; border-radius:5px; cursor:pointer;"><i class="fas fa-trash"></i></button>
+                    <button onclick="moveCategory('${cat.id}', 'up')" style="background:var(--text-muted); color:#fff; border:none; padding:5px; border-radius:5px; ${upStyle}"><i class="fas fa-arrow-up"></i></button>
+                    <button onclick="moveCategory('${cat.id}', 'down')" style="background:var(--text-muted); color:#fff; border:none; padding:5px; border-radius:5px; ${downStyle}"><i class="fas fa-arrow-down"></i></button>
+                    <button onclick="deleteCategory('${cat.id}')" style="background:var(--danger); color:#fff; border:none; padding:5px; border-radius:5px;"><i class="fas fa-trash"></i></button>
                 </div>
-            </div>
-        `;
+            </div>`;
     });
 }
 
 function updateCategoryDropdown() {
     const select = document.getElementById('itemCategory');
     if (!select) return;
-    const categories = getCategories();
     select.innerHTML = '';
-    categories.forEach(cat => {
-        select.innerHTML += `<option value="${cat.id}">${cat.name}</option>`;
-    });
+    getCategories().forEach(cat => select.innerHTML += `<option value="${cat.id}">${cat.name}</option>`);
 }
 
 // =========================================
@@ -114,23 +88,19 @@ function loadStats() {
     const stats = JSON.parse(localStorage.getItem('bloxStats')) || { orders: '', rating: '' };
     const ordersEl = document.getElementById('set-orders');
     const ratingEl = document.getElementById('set-rating');
-    if(ordersEl) ordersEl.value = stats.orders;
-    if(ratingEl) ratingEl.value = stats.rating;
+    if (ordersEl) ordersEl.value = stats.orders || '';
+    if (ratingEl) ratingEl.value = stats.rating || '';
 }
 
 function saveStats() {
-    const ordersEl = document.getElementById('set-orders');
-    const ratingEl = document.getElementById('set-rating');
-    if(!ordersEl || !ratingEl) return;
-    
-    const orders = ordersEl.value;
-    const rating = ratingEl.value;
+    const orders = document.getElementById('set-orders').value;
+    const rating = document.getElementById('set-rating').value;
     localStorage.setItem('bloxStats', JSON.stringify({ orders, rating }));
-    alert('آمار سایت با موفقیت به‌روزرسانی شد!');
+    showToast('آمار سایت ذخیره شد!', 'success');
 }
 
 // =========================================
-// ۳. مدیریت آیتم‌ها (میوه‌ها/شمشیرها)
+// ۳. مدیریت آیتم‌ها
 // =========================================
 document.getElementById('itemImgFile')?.addEventListener('change', function(e) {
     const file = e.target.files[0];
@@ -140,18 +110,13 @@ document.getElementById('itemImgFile')?.addEventListener('change', function(e) {
         const img = new Image();
         img.onload = function() {
             const canvas = document.createElement('canvas');
-            const MAX_WIDTH = 400;
-            const scaleSize = MAX_WIDTH / img.width;
-            canvas.width = MAX_WIDTH;
+            const scaleSize = 400 / img.width;
+            canvas.width = 400;
             canvas.height = img.height * scaleSize;
-            const ctx = canvas.getContext('2d');
-            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+            canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
             currentImageBase64 = canvas.toDataURL('image/jpeg', 0.7);
-            const preview = document.getElementById('imagePreview');
-            if(preview) {
-                preview.src = currentImageBase64;
-                preview.style.display = 'block';
-            }
+            document.getElementById('imagePreview').src = currentImageBase64;
+            document.getElementById('imagePreview').style.display = 'block';
         };
         img.src = event.target.result;
     };
@@ -159,58 +124,38 @@ document.getElementById('itemImgFile')?.addEventListener('change', function(e) {
 });
 
 function saveItem() {
-    const idEl = document.getElementById('edit-item-id');
-    const nameEl = document.getElementById('itemName');
-    const priceEl = document.getElementById('itemPrice');
-    const categoryEl = document.getElementById('itemCategory');
+    const id = document.getElementById('edit-item-id').value;
+    const name = document.getElementById('itemName').value.trim();
+    const price = document.getElementById('itemPrice').value.trim();
+    const category = document.getElementById('itemCategory').value;
     
-    if(!idEl || !nameEl || !priceEl || !categoryEl) return;
-
-    const id = idEl.value;
-    const name = nameEl.value.trim();
-    const price = priceEl.value.trim();
-    const category = categoryEl.value;
-    
-    if (!name || !price) { alert('نام و قیمت الزامی است!'); return; }
-    if (!currentImageBase64) { alert('لطفاً یک عکس برای آیتم انتخاب کنید!'); return; }
+    if (!name || !price || !currentImageBase64) { showToast('نام، قیمت و عکس الزامی است!', 'error'); return; }
 
     let items = getItems();
     if (id) {
         const index = items.findIndex(i => i.id == id);
-        if (index > -1) items[index] = { ...items[index], name, price, category, img: currentImageBase64 };
+        items[index] = { ...items[index], name, price, category, img: currentImageBase64 };
     } else {
         items.push({ id: Date.now(), name, price, category, img: currentImageBase64, status: true });
     }
-    
-    try {
-        saveItems(items);
-        resetForm();
-        renderAdminSliders();
-        alert(id ? 'آیتم ویرایش شد!' : 'آیتم جدید اضافه شد!');
-    } catch (error) {
-        alert('حافظه پر شده است! چند آیتم حذف کنید.');
-    }
+    saveItems(items);
+    resetForm();
+    renderAdminSliders();
+    showToast(id ? 'آیتم ویرایش شد!' : 'آیتم اضافه شد!', 'success');
 }
 
 function editItem(id) {
-    const items = getItems();
-    const item = items.find(i => i.id == id);
+    const item = getItems().find(i => i.id == id);
     if (!item) return;
-    
     document.getElementById('form-title').innerText = 'ویرایش آیتم';
     document.getElementById('edit-item-id').value = item.id;
     document.getElementById('itemName').value = item.name;
     document.getElementById('itemPrice').value = item.price;
     document.getElementById('itemCategory').value = item.category;
-    
     currentImageBase64 = item.img;
-    const preview = document.getElementById('imagePreview');
-    if(preview) {
-        preview.src = item.img;
-        preview.style.display = 'block';
-    }
+    document.getElementById('imagePreview').src = item.img;
+    document.getElementById('imagePreview').style.display = 'block';
     document.getElementById('cancel-btn').style.display = 'block';
-    document.getElementById('form-card').scrollIntoView({ behavior: 'smooth' });
 }
 
 function resetForm() {
@@ -220,19 +165,13 @@ function resetForm() {
     document.getElementById('itemPrice').value = '';
     currentImageBase64 = '';
     document.getElementById('itemImgFile').value = '';
-    const preview = document.getElementById('imagePreview');
-    if(preview) {
-        preview.src = '';
-        preview.style.display = 'none';
-    }
+    document.getElementById('imagePreview').style.display = 'none';
     document.getElementById('cancel-btn').style.display = 'none';
 }
 
 function deleteItem(id) {
     if (confirm('حذف شود؟')) {
-        let items = getItems();
-        items = items.filter(i => i.id != id);
-        saveItems(items);
+        saveItems(getItems().filter(i => i.id != id));
         renderAdminSliders();
     }
 }
@@ -240,11 +179,8 @@ function deleteItem(id) {
 function moveItem(id, direction) {
     let items = getItems();
     const index = items.findIndex(i => i.id == id);
-    if (direction === 'left' && index > 0) {
-        [items[index], items[index - 1]] = [items[index - 1], items[index]];
-    } else if (direction === 'right' && index < items.length - 1) {
-        [items[index], items[index + 1]] = [items[index + 1], items[index]];
-    }
+    if (direction === 'left' && index > 0) [items[index], items[index - 1]] = [items[index - 1], items[index]];
+    else if (direction === 'right' && index < items.length - 1) [items[index], items[index + 1]] = [items[index + 1], items[index]];
     saveItems(items);
     renderAdminSliders();
 }
@@ -252,15 +188,13 @@ function moveItem(id, direction) {
 function toggleStatus(id) {
     let items = getItems();
     const index = items.findIndex(i => i.id == id);
-    if (index > -1) {
-        items[index].status = items[index].status === false ? true : false;
-        saveItems(items);
-        renderAdminSliders();
-    }
+    items[index].status = items[index].status === false ? true : false;
+    saveItems(items);
+    renderAdminSliders();
 }
 
 // =========================================
-// ۴. مدیریت توضیحات خدمات (با عکس)
+// ۴. مدیریت خدمات
 // =========================================
 document.getElementById('serviceImgFile')?.addEventListener('change', function(e) {
     const file = e.target.files[0];
@@ -270,19 +204,13 @@ document.getElementById('serviceImgFile')?.addEventListener('change', function(e
         const img = new Image();
         img.onload = function() {
             const canvas = document.createElement('canvas');
-            const MAX_WIDTH = 400;
-            const scaleSize = MAX_WIDTH / img.width;
-            canvas.width = MAX_WIDTH;
+            const scaleSize = 400 / img.width;
+            canvas.width = 400;
             canvas.height = img.height * scaleSize;
-            const ctx = canvas.getContext('2d');
-            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+            canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
             currentServiceImageBase64 = canvas.toDataURL('image/jpeg', 0.7);
-            
-            const preview = document.getElementById('serviceImgPreview');
-            if(preview) {
-                preview.src = currentServiceImageBase64;
-                preview.style.display = 'block';
-            }
+            document.getElementById('serviceImgPreview').src = currentServiceImageBase64;
+            document.getElementById('serviceImgPreview').style.display = 'block';
         };
         img.src = event.target.result;
     };
@@ -290,64 +218,37 @@ document.getElementById('serviceImgFile')?.addEventListener('change', function(e
 });
 
 function saveService() {
-    const idEl = document.getElementById('edit-service-id');
-    const titleEl = document.getElementById('serviceTitle');
-    const descEl = document.getElementById('serviceDesc');
-    const iconEl = document.getElementById('serviceIcon');
+    const id = document.getElementById('edit-service-id').value;
+    const title = document.getElementById('serviceTitle').value.trim();
+    const desc = document.getElementById('serviceDesc').value.trim();
+    const icon = document.getElementById('serviceIcon').value.trim() || 'fas fa-star'; 
 
-    if(!idEl || !titleEl || !descEl || !iconEl) return;
-
-    const id = idEl.value;
-    const title = titleEl.value.trim();
-    const desc = descEl.value.trim();
-    const icon = iconEl.value.trim() || 'fas fa-star'; 
-    const img = currentServiceImageBase64 || '';
-
-    if (!title || !desc) { alert('عنوان و توضیحات الزامی است!'); return; }
+    if (!title || !desc) { showToast('عنوان و توضیحات الزامی است!', 'error'); return; }
 
     let services = getServices();
     if (id) {
         const index = services.findIndex(s => s.id == id);
-        if (index > -1) services[index] = { ...services[index], title, desc, icon, img };
+        services[index] = { ...services[index], title, desc, icon, img: currentServiceImageBase64 || services[index].img };
     } else {
-        services.push({ id: Date.now(), title, desc, icon, img });
+        services.push({ id: Date.now(), title, desc, icon, img: currentServiceImageBase64 || '' });
     }
-
-    try {
-        saveServices(services);
-        resetServiceForm();
-        renderAdminServices();
-        alert(id ? 'خدمت ویرایش شد!' : 'خدمت جدید اضافه شد!');
-    } catch (error) {
-         alert('حافظه پر شده است!');
-    }
+    saveServices(services);
+    resetServiceForm();
+    renderAdminServices();
+    showToast(id ? 'خدمت ویرایش شد!' : 'خدمت اضافه شد!', 'success');
 }
 
 function editService(id) {
-    const services = getServices();
-    const service = services.find(s => s.id == id);
+    const service = getServices().find(s => s.id == id);
     if (!service) return;
-    
     document.getElementById('service-form-title').innerText = 'ویرایش خدمت';
     document.getElementById('edit-service-id').value = service.id;
     document.getElementById('serviceTitle').value = service.title;
     document.getElementById('serviceDesc').value = service.desc;
     document.getElementById('serviceIcon').value = service.icon;
-    
     currentServiceImageBase64 = service.img || '';
-    const preview = document.getElementById('serviceImgPreview');
-    if(preview) {
-        if(service.img) {
-            preview.src = service.img;
-            preview.style.display = 'block';
-        } else {
-            preview.src = '';
-            preview.style.display = 'none';
-        }
-    }
-
+    if(service.img) { document.getElementById('serviceImgPreview').src = service.img; document.getElementById('serviceImgPreview').style.display = 'block'; }
     document.getElementById('cancel-service-btn').style.display = 'block';
-    document.getElementById('service-form-card').scrollIntoView({ behavior: 'smooth' });
 }
 
 function resetServiceForm() {
@@ -356,23 +257,15 @@ function resetServiceForm() {
     document.getElementById('serviceTitle').value = '';
     document.getElementById('serviceDesc').value = '';
     document.getElementById('serviceIcon').value = '';
-    
     currentServiceImageBase64 = '';
     document.getElementById('serviceImgFile').value = '';
-    const preview = document.getElementById('serviceImgPreview');
-    if(preview) {
-        preview.src = '';
-        preview.style.display = 'none';
-    }
-    
+    document.getElementById('serviceImgPreview').style.display = 'none';
     document.getElementById('cancel-service-btn').style.display = 'none';
 }
 
 function deleteService(id) {
     if (confirm('حذف شود؟')) {
-        let services = getServices();
-        services = services.filter(s => s.id != id);
-        saveServices(services);
+        saveServices(getServices().filter(s => s.id != id));
         renderAdminServices();
     }
 }
@@ -380,120 +273,203 @@ function deleteService(id) {
 function renderAdminServices() {
     const list = document.getElementById('admin-services-list');
     if(!list) return;
-    const services = getServices();
     list.innerHTML = '';
-    if (services.length === 0) {
-        list.innerHTML = '<p style="color:var(--text-muted); font-size:0.9rem;">لیست خالی است.</p>';
-        return;
-    }
-    services.forEach(s => {
-        const displayMedia = s.img 
-            ? `<img src="${s.img}" style="width: 30px; height: 30px; object-fit: contain; border-radius: 4px; vertical-align: middle; margin-left: 5px;">`
-            : `<i class="${s.icon}" style="margin-left: 5px;"></i>`;
-
+    getServices().forEach(s => {
+        const displayMedia = s.img ? `<img src="${s.img}" style="width: 30px; height: 30px; object-fit: contain; margin-left: 5px;">` : `<i class="${s.icon}" style="margin-left: 5px;"></i>`;
         list.innerHTML += `
             <div class="admin-item-row" style="padding: 10px; display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--border-color);">
-                <div style="display:flex; align-items:center;">
-                    ${displayMedia}
-                    <strong style="color:var(--primary-blue);">${s.title}</strong>
-                </div>
+                <div style="display:flex; align-items:center;">${displayMedia}<strong style="color:var(--primary-blue);">${s.title}</strong></div>
                 <div style="display:flex; gap:5px;">
-                    <button onclick="editService(${s.id})" style="background:var(--primary-blue); color:#fff; border:none; padding:5px 10px; border-radius:5px; cursor:pointer;"><i class="fas fa-edit"></i></button>
-                    <button onclick="deleteService(${s.id})" style="background:var(--danger); color:#fff; border:none; padding:5px 10px; border-radius:5px; cursor:pointer;"><i class="fas fa-trash"></i></button>
+                    <button onclick="editService(${s.id})" style="background:var(--primary-blue); color:#fff; border:none; padding:5px 10px; border-radius:5px;"><i class="fas fa-edit"></i></button>
+                    <button onclick="deleteService(${s.id})" style="background:var(--danger); color:#fff; border:none; padding:5px 10px; border-radius:5px;"><i class="fas fa-trash"></i></button>
                 </div>
-            </div>
-        `;
+            </div>`;
     });
 }
 
 // =========================================
-// ۵. ساخت اسلایدرهای داینامیک پنل ادمین
+// ۵. اسلایدرها
 // =========================================
 function renderAdminSliders() {
+    // نابودی Swiperهای قبلی برای جلوگیری از listener تکراری
+    adminSwipers.forEach(s => { try { s.destroy(true, true); } catch(e){} });
+    adminSwipers = [];
+
     const container = document.getElementById('admin-sliders-container');
     if(!container) return;
-    const categories = getCategories();
-    const items = getItems();
     container.innerHTML = ''; 
 
-    categories.forEach(category => {
-        const sliderHTML = `
+    getCategories().forEach(category => {
+        container.insertAdjacentHTML('beforeend', `
             <div class="slider-section" id="section-${category.id}">
                 <h3 style="color: ${category.color};">${category.name}</h3>
                 <div class="swiper mySwiper" id="swiper-${category.id}">
-                    <div class="swiper-wrapper"></div>
-                    <div class="swiper-button-next"></div>
-                    <div class="swiper-button-prev"></div>
+                    <div class="swiper-wrapper"></div><div class="swiper-button-next"></div><div class="swiper-button-prev"></div>
                 </div>
-            </div>
-        `;
-        container.insertAdjacentHTML('beforeend', sliderHTML);
+            </div>`);
 
         const wrapper = document.querySelector(`#swiper-${category.id} .swiper-wrapper`);
-        const filtered = items.filter(i => i.category === category.id);
+        const filtered = getItems().filter(i => i.category === category.id);
         
-        if (filtered.length === 0) {
-            document.getElementById(`section-${category.id}`).style.display = 'none';
-            return;
-        }
+        if (filtered.length === 0) { document.getElementById(`section-${category.id}`).style.display = 'none'; return; }
 
         filtered.forEach((item, index) => {
-            const leftBtnStyle = index === 0 ? 'opacity: 0.3; pointer-events: none;' : '';
-            const rightBtnStyle = index === filtered.length - 1 ? 'opacity: 0.3; pointer-events: none;' : '';
             const isAvailable = item.status !== false;
             const statusIcon = isAvailable ? '<i class="fas fa-check-circle" style="color:#fff;"></i>' : '<i class="fas fa-times-circle" style="color:#fff;"></i>';
-            const toggleBtnStyle = isAvailable ? 'background: #00cc66; color: #fff;' : 'background: var(--danger); color: #fff;';
-            const statusText = isAvailable ? '<span style="color:#00cc66; font-size:0.8rem;">(موجود)</span>' : '<span style="color:var(--danger); font-size:0.8rem;">(ناموجود)</span>';
-
+            const toggleBtnStyle = isAvailable ? 'background: #00cc66;' : 'background: var(--danger);';
+            
             wrapper.innerHTML += `
                 <div class="swiper-slide" style="${!isAvailable ? 'opacity: 0.8;' : ''}">
                     <div class="admin-actions">
-                        <button class="btn-move" onclick="moveItem(${item.id}, 'left')" style="${leftBtnStyle}" title="جابجایی"><i class="fas fa-arrow-right"></i></button>
-                        <button class="btn-move" onclick="moveItem(${item.id}, 'right')" style="${rightBtnStyle}" title="جابجایی"><i class="fas fa-arrow-left"></i></button>
-                        <button class="btn-edit" onclick="editItem(${item.id})" title="ویرایش"><i class="fas fa-edit"></i></button>
-                        <button class="btn-delete" onclick="deleteItem(${item.id})" title="حذف"><i class="fas fa-trash"></i></button>
-                        <button onclick="toggleStatus(${item.id})" style="width:35px; height:35px; border-radius:50%; border:none; cursor:pointer; display:flex; justify-content:center; align-items:center; ${toggleBtnStyle}" title="موجودی">${statusIcon}</button>
+                        <button class="btn-move" onclick="moveItem(${item.id}, 'left')"><i class="fas fa-arrow-right"></i></button>
+                        <button class="btn-move" onclick="moveItem(${item.id}, 'right')"><i class="fas fa-arrow-left"></i></button>
+                        <button class="btn-edit" onclick="editItem(${item.id})"><i class="fas fa-edit"></i></button>
+                        <button class="btn-delete" onclick="deleteItem(${item.id})"><i class="fas fa-trash"></i></button>
+                        <button onclick="toggleStatus(${item.id})" style="width:35px; height:35px; border-radius:50%; color:#fff; border:none; ${toggleBtnStyle}">${statusIcon}</button>
                     </div>
-                    <img src="${item.img}" alt="${item.name}" loading="lazy" style="height:100px; width:100px; object-fit:contain; border-radius:10px; ${!isAvailable ? 'filter: grayscale(100%);' : ''}">
-                    <h4 style="margin-top: 10px; color: ${category.color};">${item.name} ${statusText}</h4>
-                    <p style="color:var(--primary-blue); font-weight:bold; margin-top:5px;">${item.price} تومان</p>
-                </div>
-            `;
+                    <img src="${item.img}" style="height:100px; width:100px; object-fit:contain; ${!isAvailable ? 'filter: grayscale(100%);' : ''}">
+                    <h4 style="margin-top: 10px; color: ${category.color};">${item.name}</h4>
+                    <p style="color:var(--primary-blue); font-weight:bold;">${item.price} تومان</p>
+                </div>`;
         });
 
-        new Swiper(`#swiper-${category.id}`, {
+        adminSwipers.push(new Swiper(`#swiper-${category.id}`, {
             slidesPerView: 'auto', spaceBetween: 20, centerInsufficientSlides: true,
             navigation: { nextEl: `#swiper-${category.id} .swiper-button-next`, prevEl: `#swiper-${category.id} .swiper-button-prev` }
-        });
+        }));
     });
 }
 
 // =========================================
-// ۶. مدیریت تم مناسبت‌ها (جدید)
+// ۶. تم و بنر (اصلاح‌شده و null-safe)
 // =========================================
 function loadSeasonTheme() {
     const theme = localStorage.getItem('bloxSeasonTheme') || 'default';
-    const select = document.getElementById('seasonThemeSelect');
-    if (select) select.value = theme;
+    const themeSelect = document.getElementById('seasonThemeSelect');
+    if (themeSelect) themeSelect.value = theme;
+
+    const banner = JSON.parse(localStorage.getItem('bloxCustomBanner')) || { text: '', status: 'off' };
+    const bannerTextEl = document.getElementById('customBannerText');
+    const bannerStatusEl = document.getElementById('customBannerStatus');
+    if (bannerTextEl) bannerTextEl.value = banner.text;
+    if (bannerStatusEl) bannerStatusEl.value = banner.status;
 }
 
 function saveSeasonTheme() {
-    const select = document.getElementById('seasonThemeSelect');
-    if (!select) return;
-    
-    const theme = select.value;
-    localStorage.setItem('bloxSeasonTheme', theme);
-    alert('تم سایت با موفقیت تغییر کرد! صفحه را رفرش کنید تا تغییرات را ببینید.');
+    localStorage.setItem('bloxSeasonTheme', document.getElementById('seasonThemeSelect').value);
+    showToast('تم سایت تغییر کرد! صفحه را رفرش کنید.', 'success');
+}
+
+function saveCustomBanner() {
+    const textEl = document.getElementById('customBannerText');
+    const statusEl = document.getElementById('customBannerStatus');
+    if (!textEl || !statusEl) {
+        showToast('فیلدهای بنر سفارشی در صفحه وجود ندارند.', 'error');
+        return;
+    }
+    const text = textEl.value.trim();
+    const status = statusEl.value;
+    localStorage.setItem('bloxCustomBanner', JSON.stringify({ text, status }));
+    showToast('بنر عادی ذخیره شد! صفحه را رفرش کنید.', 'success');
 }
 
 // =========================================
-// اجرای اولیه تمام توابع بعد از لود صفحه
+// ۷. مدیریت سفارش‌ها
+// =========================================
+function renderAdminOrders() {
+    const ordersList = document.getElementById('admin-orders-list');
+    const usersCountEl = document.getElementById('total-users-count');
+    
+    if (usersCountEl) usersCountEl.innerText = getUsers().length;
+    if (!ordersList) return;
+    
+    const orders = getOrders().filter(o => !o.adminDeleted);
+    ordersList.innerHTML = '';
+
+    if (orders.length === 0) {
+        ordersList.innerHTML = '<p style="color:var(--text-muted); grid-column: 1/-1;">هیچ سفارش فعالی وجود ندارد.</p>';
+        return;
+    }
+
+    orders.slice().reverse().forEach(order => {
+        const isCompleted = order.status === 'completed';
+        const statusBtnColor = isCompleted ? '#00cc66' : 'var(--primary-orange)';
+        const statusText = isCompleted ? 'انجام شده ✅' : 'در انتظار ⏳';
+
+        ordersList.innerHTML += `
+            <div class="admin-form-card" style="padding: 15px; border-color: ${statusBtnColor};">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; border-bottom:1px solid var(--border-color); padding-bottom:10px;">
+                    <div>
+                        <strong style="color:var(--primary-blue); font-size:1.2rem;">${order.trackingCode}</strong>
+                        <br><span style="font-size:0.85rem; color:var(--text-muted);">کاربر: ${order.username}</span>
+                    </div>
+                    <div style="display:flex; gap:5px;">
+                        <button onclick="toggleOrderStatus(${order.id})" style="background:${statusBtnColor}; color:#fff; border:none; padding:5px 10px; border-radius:5px; font-size:0.8rem;">${statusText}</button>
+                        <button onclick="deleteOrder(${order.id})" style="background:var(--danger); color:#fff; border:none; padding:5px 10px; border-radius:5px;"><i class="fas fa-trash"></i></button>
+                    </div>
+                </div>
+                
+                <div style="background:rgba(0,0,0,0.2); padding:10px; border-radius:8px; font-size:0.85rem; margin-bottom:10px; border: 1px solid var(--primary-blue);">
+                    <strong style="color:var(--primary-blue);">اطلاعات اکانت روبلاکس:</strong>
+                    <ul style="list-style:none; margin-top:5px;">
+                        <li>یوزر: <span style="color:#fff;">${order.rbxData ? order.rbxData.user : 'نامشخص'}</span></li>
+                        <li>پسورد: <span style="color:#fff;">${order.rbxData ? order.rbxData.pass : 'نامشخص'}</span></li>
+                        <li>بکاپ ۱: <span style="color:#fff;">${order.rbxData ? order.rbxData.backup1 : 'نامشخص'}</span></li>
+                        <li>بکاپ ۲: <span style="color:#fff;">${order.rbxData ? order.rbxData.backup2 : 'نامشخص'}</span></li>
+                    </ul>
+                </div>
+
+                <div style="font-size:0.9rem; margin-bottom:10px;">
+                    <span style="color:var(--text-muted);">تاریخ:</span> ${order.date} | <span style="color:var(--text-muted);">مبلغ:</span> <span style="color:var(--primary-blue);">${order.totalPrice} تومان</span>
+                </div>
+                <div style="background:rgba(0,0,0,0.2); padding:10px; border-radius:8px; font-size:0.85rem;">
+                    <ul style="list-style:none;">${order.items.map(i => `<li style="margin-bottom:3px;">- ${i.name} (تعداد: ${i.quantity})</li>`).join('')}</ul>
+                </div>
+            </div>
+        `;
+    });
+}
+
+function toggleOrderStatus(id) {
+    let orders = getOrders();
+    const index = orders.findIndex(o => o.id == id);
+    if (index > -1) {
+        orders[index].status = orders[index].status === 'completed' ? 'pending' : 'completed';
+        saveOrders(orders);
+        renderAdminOrders();
+    }
+}
+
+function deleteOrder(id) {
+    if (confirm('آیا از حذف این سفارش از پنل ادمین مطمئن هستید؟ (برای مشتری باقی می‌ماند)')) {
+        let orders = getOrders();
+        const index = orders.findIndex(o => o.id == id);
+        if (index > -1) {
+            orders[index].adminDeleted = true;
+            saveOrders(orders);
+            renderAdminOrders();
+            showToast('سفارش از پنل ادمین حذف شد.', 'success');
+        }
+    }
+}
+
+function clearAllOrders() {
+    if (confirm('آیا مطمئن هستید؟ تمام سفارش‌ها پاک می‌شوند!')) {
+        localStorage.removeItem('bloxOrders');
+        renderAdminOrders();
+        showToast('تمام سفارش‌ها با موفقیت پاک شدند.', 'success');
+    }
+}
+
+// =========================================
+// اجرای اولیه
 // =========================================
 document.addEventListener('DOMContentLoaded', () => {
-    loadStats();
-    updateCategoryDropdown();
-    renderAdminCategories();
-    renderAdminSliders();
-    renderAdminServices();
-    loadSeasonTheme(); // <--- اجرای تابع لود تم مناسبت
+    try { loadStats(); } catch(e) { console.warn('loadStats:', e); }
+    try { updateCategoryDropdown(); } catch(e) { console.warn('updateCategoryDropdown:', e); }
+    try { renderAdminCategories(); } catch(e) { console.warn('renderAdminCategories:', e); }
+    try { renderAdminSliders(); } catch(e) { console.warn('renderAdminSliders:', e); }
+    try { renderAdminServices(); } catch(e) { console.warn('renderAdminServices:', e); }
+    try { loadSeasonTheme(); } catch(e) { console.warn('loadSeasonTheme:', e); }
+    try { renderAdminOrders(); } catch(e) { console.warn('renderAdminOrders:', e); }
 });

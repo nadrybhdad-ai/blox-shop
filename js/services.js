@@ -31,7 +31,6 @@ function renderServiceDescriptions() {
         `;
     });
 
-    // راه‌اندازی اسلایدر توضیحات
     new Swiper('#services-desc-slider', {
         slidesPerView: 'auto',
         spaceBetween: 20,
@@ -53,7 +52,7 @@ function renderServicesSlider() {
     if (!servicesSliderWrapper) return;
     servicesSliderWrapper.innerHTML = '';
     
-    const filtered = allItems.filter(item => item.category === 'Service');
+    const filtered = allItems.filter(item => item.category.toLowerCase() === 'service');
     
     if (filtered.length === 0) {
         servicesSliderWrapper.innerHTML = '<div class="swiper-slide" style="width:100%; text-align:center; color:var(--text-muted); background:transparent; border:none;">در حال حاضر خدمتی برای فروش ثبت نشده است.</div>';
@@ -69,7 +68,7 @@ function renderServicesSlider() {
 
         const btnHTML = isOutOfStock 
             ? `<button class="btn-buy" style="background:var(--danger); color:white; border-color:var(--danger); cursor:not-allowed;">ناموجود</button>`
-            : `<button class="btn-buy" onclick="addToCart(${item.id}, '${item.name}', '${item.price}', '${item.img}')">سفارش خدمت</button>`;
+            : `<button class="btn-buy" onclick="addToCart(${item.id})">سفارش خدمت</button>`;
 
         servicesSliderWrapper.innerHTML += `
             <div class="swiper-slide" style="${isOutOfStock ? 'opacity: 0.8;' : ''}">
@@ -83,7 +82,6 @@ function renderServicesSlider() {
         `;
     });
 
-    // راه‌اندازی اسلایدر خرید
     new Swiper('#services-slider', {
         slidesPerView: 'auto',
         spaceBetween: 20,

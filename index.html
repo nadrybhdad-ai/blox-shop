@@ -8,28 +8,25 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/home.css">
+ 
 </head>
 <body>
        <header>
         <div class="logo"><img src="images/logo.jpg" alt="Logo"></div>
         
-        <!-- دکمه منوی موبایل -->
         <button class="mobile-menu-btn" onclick="toggleMobileMenu()">
             <i class="fas fa-bars"></i>
         </button>
 
-        <!-- لایه تاریک پشت منو (برای بستن منو با کلیک بیرون از آن) -->
         <div class="menu-overlay" onclick="toggleMobileMenu()"></div>
         
-        <!-- سایدبار (منوی کناری) -->
         <div class="sidebar-content">
-            <!-- دکمه بستن منو (داخل سایدبار) -->
             <button class="close-sidebar-btn" onclick="toggleMobileMenu()">
                 <i class="fas fa-times"></i>
             </button>
 
             <nav>
-                <ul></ul> <!-- لینک‌ها توسط JS ساخته می‌شوند -->
+                <ul></ul>
             </nav>
             
             <div class="header-actions">
@@ -93,6 +90,13 @@
                 </div>
             </div>
         </section>
+
+        <!-- بخش معرفی خدمات -->
+        <h2 class="page-title" style="margin-top: 60px;">خدمات ما</h2>
+        <div class="services-banner">
+            <p style="color: var(--text-muted); width: 100%; margin: 0;">به زودی خدمات ویژه اضافه می‌شود...</p>
+            <a href="services.html" class="btn-primary" style="margin-top: 15px;">مشاهده تمام خدمات</a>
+        </div>
 
         <!-- بخش اسلایدرها (داینامیک) -->
         <h2 class="page-title" style="margin-top: 60px;">محصولات ما</h2>

@@ -600,3 +600,103 @@ body.theme-nowruz {
     from { transform: translateY(-100%); opacity: 0; }
     to { transform: translateY(0); opacity: 1; }
 }
+/* =========================================
+   استایل مودال سفارش‌های مشتری
+========================================= */
+#customer-orders-modal .cart-modal-content {
+    border-color: #00cc66;
+}
+
+#customer-orders-modal .cart-header h3 {
+    color: #00cc66;
+}
+
+/* =========================================
+   استایل‌های مربوط به تم مناسبت‌ها (کدهای قبلی)
+========================================= */
+body.theme-halloween {
+    --bg-color: #150d1c; --card-bg: #22142b; --primary-blue: #ff7b00; --primary-orange: #a855f7; --border-color: #3d2352;
+}
+.banner-halloween { background: linear-gradient(90deg, #ff7b00, #a855f7); color: #fff; text-shadow: 0 0 10px rgba(0,0,0,0.5); }
+
+body.theme-valentine {
+    --bg-color: #1c0a12; --card-bg: #2e111d; --primary-blue: #ff3366; --primary-orange: #ff99cc; --border-color: #4d1c30;
+}
+.banner-valentine { background: linear-gradient(90deg, #ff3366, #ff99cc); color: #fff; }
+
+body.theme-christmas {
+    --bg-color: #0a1a12; --card-bg: #112b1e; --primary-blue: #e74c3c; --primary-orange: #2ecc71; --border-color: #1e4a34;
+}
+.banner-christmas { background: linear-gradient(90deg, #e74c3c, #2ecc71); color: #fff; }
+
+body.theme-nowruz {
+    --bg-color: #0a1a1a; --card-bg: #112b2a; --primary-blue: #00d2ff; --primary-orange: #2ecc71; --border-color: #1e4a48;
+}
+.banner-nowruz { background: linear-gradient(90deg, #2ecc71, #00d2ff); color: #fff; }
+
+.season-banner {
+    width: 100%; text-align: center; padding: 12px; font-weight: bold; font-size: 1.1rem; font-family: inherit;
+    z-index: 9999; position: relative; box-shadow: 0 4px 15px rgba(0,0,0,0.3); animation: slideDownBanner 0.5s ease;
+}
+
+@keyframes slideDownBanner {
+    from { transform: translateY(-100%); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+/* =========================================
+   سیستم نوتیفیکیشن زیبا (Toast)
+========================================= */
+#toast-container {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    z-index: 10000;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.toast {
+    background: var(--card-bg);
+    color: var(--text-color);
+    padding: 15px 25px;
+    border-radius: 10px;
+    font-family: 'Vazirmatn', sans-serif;
+    font-weight: bold;
+    font-size: 1rem;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.4);
+    border-left: 5px solid var(--primary-blue);
+    transform: translateX(-150%);
+    opacity: 0;
+    transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.toast.show {
+    transform: translateX(0);
+    opacity: 1;
+}
+
+.toast-success { border-left-color: #00cc66; }
+.toast-error { border-left-color: var(--danger); }
+.toast-info { border-left-color: var(--primary-orange); }
+
+/* =========================================
+   بنر عادی سفارشی (تم پیش‌فرض)
+========================================= */
+.custom-normal-banner {
+    width: 100%;
+    text-align: center;
+    padding: 12px;
+    font-weight: bold;
+    font-size: 1.1rem;
+    font-family: inherit;
+    z-index: 9999;
+    position: relative;
+    background: linear-gradient(90deg, var(--primary-blue), #0077ff);
+    color: #fff;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    animation: slideDownBanner 0.5s ease;
+}

@@ -9,30 +9,16 @@
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/home.css">
     <link rel="stylesheet" href="css/admin.css">
+        <link rel="shortcut icon" href="./images/logo.jpg" type="image/x-icon">
 </head>
 <body>
-        <header>
+    <header>
         <div class="logo"><img src="images/logo.jpg" alt="Logo"></div>
-        
-        <!-- دکمه منوی موبایل -->
-        <button class="mobile-menu-btn" onclick="toggleMobileMenu()">
-            <i class="fas fa-bars"></i>
-        </button>
-
-        <!-- لایه تاریک پشت منو (برای بستن منو با کلیک بیرون از آن) -->
+        <button class="mobile-menu-btn" onclick="toggleMobileMenu()"><i class="fas fa-bars"></i></button>
         <div class="menu-overlay" onclick="toggleMobileMenu()"></div>
-        
-        <!-- سایدبار (منوی کناری) -->
         <div class="sidebar-content">
-            <!-- دکمه بستن منو (داخل سایدبار) -->
-            <button class="close-sidebar-btn" onclick="toggleMobileMenu()">
-                <i class="fas fa-times"></i>
-            </button>
-
-            <nav>
-                <ul></ul> <!-- لینک‌ها توسط JS ساخته می‌شوند -->
-            </nav>
-            
+            <button class="close-sidebar-btn" onclick="toggleMobileMenu()"><i class="fas fa-times"></i></button>
+            <nav><ul></ul></nav>
             <div class="header-actions">
                 <button class="theme-toggle">☀️</button>
                 <div id="auth-container"></div>
@@ -44,9 +30,7 @@
         <h1 class="page-title" style="margin-top: 30px;">داشبورد مدیریت</h1>
         <p style="text-align: center; color: var(--text-muted); margin-bottom: 40px;">در این پنل می‌توانید تمام بخش‌های فروشگاه را مدیریت کنید.</p>
 
-        <!-- بخش بالایی: فرم‌ها و تنظیمات (۲ ستونه) -->
         <div class="admin-dashboard">
-            
             <!-- ستون راست -->
             <div class="admin-column">
                 <!-- تنظیمات آمار -->
@@ -57,7 +41,7 @@
                     <button onclick="saveStats()" class="btn" style="background:var(--primary-orange); width:100%;">ذخیره آمار</button>
                 </div>
 
-                                <!-- تنظیمات تم مناسبت‌ها -->
+                <!-- تنظیمات تم مناسبت‌ها -->
                 <div class="admin-card" style="border-top-color: #9b59b6; margin-top: 20px;">
                     <h3><i class="fas fa-magic" style="color:#9b59b6;"></i> تم مناسبت‌ها</h3>
                     <select id="seasonThemeSelect">
@@ -109,7 +93,6 @@
                     <input type="text" id="serviceTitle" placeholder="عنوان خدمت (مثلا لول اپ)">
                     <textarea id="serviceDesc" placeholder="توضیحات خدمت..." rows="2" style="width:100%; padding:12px; border-radius:8px; background:var(--bg-color); border:1px solid var(--border-color); color:var(--text-color); font-family:inherit; resize:vertical; margin-bottom:10px;"></textarea>
                     <input type="text" id="serviceIcon" placeholder="آیکون (اختیاری - مثلا fas fa-level-up-alt)">
-                    
                     <div class="image-upload-group" style="margin-top: 10px;">
                         <label for="serviceImgFile" class="upload-btn" style="background: rgba(255,140,0,0.1); border-color: var(--primary-orange); color: var(--primary-orange);">
                             <i class="fas fa-cloud-upload-alt"></i> انتخاب عکس (اختیاری)
@@ -117,7 +100,6 @@
                         <input type="file" id="serviceImgFile" accept="image/*" style="display: none;">
                         <img id="serviceImgPreview" src="" alt="پیش‌نمایش" style="display: none; max-width: 100%; max-height: 120px; border-radius: 8px; border: 1px solid var(--primary-orange); object-fit: contain;">
                     </div>
-
                     <div style="display: flex; gap: 10px; margin-top:10px;">
                         <button onclick="saveService()" class="btn" style="background:var(--primary-orange); flex:1;">ذخیره خدمت</button>
                         <button onclick="resetServiceForm()" class="btn" style="background:var(--border-color); flex:1; display:none;" id="cancel-service-btn">لغو</button>
@@ -126,13 +108,30 @@
             </div>
         </div>
 
-        <!-- بخش وسط: لیست خدمات (تمام عرض) -->
+        <!-- لیست خدمات ثبت شده -->
         <div class="admin-card" style="margin-top: 30px; border-top-color: var(--border-color);">
             <h3><i class="fas fa-list" style="color:var(--text-color);"></i> لیست خدمات ثبت شده</h3>
-            <div id="admin-services-list" style="max-height: 400px; overflow-y: auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 10px;"></div>
+            <div id="admin-services-list" style="max-height: 300px; overflow-y: auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 10px;"></div>
         </div>
 
-        <!-- بخش پایین: اسلایدرها (تمام عرض) -->
+               <!-- بخش مدیریت سفارش‌ها و کاربران -->
+        <div class="admin-card" style="margin-top: 30px; border-top-color: #00cc66;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 20px;">
+                <h3><i class="fas fa-shopping-bag" style="color:#00cc66;"></i> مدیریت سفارش‌ها</h3>
+                <div style="display:flex; gap: 10px; align-items:center;">
+                    <div style="background: rgba(0, 204, 102, 0.1); padding: 8px 15px; border-radius: 8px; border: 1px solid #00cc66;">
+                        <span style="color:var(--text-muted);">کاربران: </span>
+                        <strong id="total-users-count" style="color:#00cc66; font-size:1.2rem;">0</strong>
+                    </div>
+                    <!-- دکمه ریست سفارش ها -->
+                    <button onclick="clearAllOrders()" class="btn" style="background:var(--danger); font-size:0.8rem; padding:8px 12px;"><i class="fas fa-trash-alt"></i> پاک کردن سفارش‌های تستی</button>
+                </div>
+            </div>
+            
+            <div id="admin-orders-list" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 20px; max-height: 500px; overflow-y: auto;"></div>
+        </div>
+
+        <!-- مدیریت اسلایدرها -->
         <h2 class="page-title" style="margin-top: 60px;">مدیریت اسلایدرها</h2>
         <div id="admin-sliders-container"></div>
     </main>
