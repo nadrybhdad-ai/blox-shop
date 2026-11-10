@@ -1,6 +1,14 @@
 // js/app.js
 
 // =========================================
+// ۰. بررسی فعال بودن تم مناسبتی
+// =========================================
+function isSeasonThemeActive() {
+    const seasonTheme = localStorage.getItem('bloxSeasonTheme') || 'default';
+    return seasonTheme !== 'default';
+}
+
+// =========================================
 // ۱. سیستم نوتیفیکیشن (جایگزین alert)
 // =========================================
 function showToast(message, type = 'success') {
@@ -28,15 +36,26 @@ function showToast(message, type = 'success') {
 }
 
 // =========================================
-// ۲. مدیریت تم
+// ۲. مدیریت تم (با قفل شدن در حالت تم مناسبتی)
 // =========================================
-const currentTheme = localStorage.getItem('theme') || 'dark';
-document.body.setAttribute('data-theme', currentTheme);
+const savedTheme = localStorage.getItem('theme') || 'dark';
+const initialTheme = isSeasonThemeActive() ? 'dark' : savedTheme;
+document.body.setAttribute('data-theme', initialTheme);
 
 function initThemeToggle() {
     const toggleBtns = document.querySelectorAll('.theme-toggle');
+    const seasonActive = isSeasonThemeActive();
+    
     toggleBtns.forEach(btn => {
-        btn.innerText = currentTheme === 'dark' ? '☀️' : '🌙';
+        if (seasonActive) {
+            // تم مناسبتی فعاله → دکمه روز/شب مخفی و غیرقابل استفاده میشه
+            btn.style.display = 'none';
+            return;
+        }
+        
+        // حالت عادی → دکمه فعال
+        btn.style.display = '';
+        btn.innerText = document.body.getAttribute('data-theme') === 'dark' ? '☀️' : '🌙';
         btn.addEventListener('click', () => {
             const newTheme = document.body.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
             document.body.setAttribute('data-theme', newTheme);
