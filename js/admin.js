@@ -29,6 +29,8 @@ function addCategory() {
     updateCategoryDropdown();
     renderAdminCategories();
     renderAdminSliders();
+    updateServiceSliderCategoryDropdown();
+    updateHomeSliderCategoryDropdown(); // آپدیت منوی خانه
     showToast('دسته‌بندی جدید اضافه شد!', 'success');
 }
 
@@ -42,6 +44,8 @@ function deleteCategory(id) {
         updateCategoryDropdown();
         renderAdminCategories();
         renderAdminSliders();
+        updateServiceSliderCategoryDropdown();
+        updateHomeSliderCategoryDropdown(); // آپدیت منوی خانه
     }
 }
 
@@ -82,21 +86,172 @@ function updateCategoryDropdown() {
 }
 
 // =========================================
+// ۱.۵. مدیریت اسلایدرهای صفحه خدمات
+// =========================================
+function updateServiceSliderCategoryDropdown() {
+    const select = document.getElementById('newSliderCategory');
+    if (!select) return;
+    select.innerHTML = '';
+    getCategories().forEach(cat => select.innerHTML += `<option value="${cat.id}">${cat.name}</option>`);
+}
+
+document.getElementById('newSliderType')?.addEventListener('change', function(e) {
+    const catSelect = document.getElementById('newSliderCategory');
+    if (catSelect) catSelect.style.display = e.target.value === 'items' ? 'block' : 'none';
+});
+
+function renderAdminServiceSliders() {
+    const list = document.getElementById('admin-service-sliders-list');
+    if (!list) return;
+    list.innerHTML = '';
+    const sliders = getServiceSliders();
+    
+    sliders.forEach((slider, index) => {
+        const typeLabel = slider.type === 'services' ? 'توضیحات خدمات' : `لیست آیتم‌ها (دسته: ${slider.categoryId})`;
+        list.innerHTML += `
+            <div class="admin-item-row" style="padding: 10px; display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--border-color); background:rgba(0,0,0,0.1); border-radius:8px;">
+                <div>
+                    <strong style="color:var(--primary-blue);">${slider.title}</strong>
+                    <br><span style="font-size:0.8rem; color:var(--text-muted);">${typeLabel}</span>
+                </div>
+                <div style="display:flex; gap:5px;">
+                    <button onclick="moveServiceSlider('${slider.id}', 'up')" style="background:var(--text-muted); color:#fff; border:none; padding:5px; border-radius:5px; ${index === 0 ? 'opacity: 0.3; pointer-events: none;' : ''}"><i class="fas fa-arrow-up"></i></button>
+                    <button onclick="moveServiceSlider('${slider.id}', 'down')" style="background:var(--text-muted); color:#fff; border:none; padding:5px; border-radius:5px; ${index === sliders.length - 1 ? 'opacity: 0.3; pointer-events: none;' : ''}"><i class="fas fa-arrow-down"></i></button>
+                    <button onclick="deleteServiceSlider('${slider.id}')" style="background:var(--danger); color:#fff; border:none; padding:5px; border-radius:5px;"><i class="fas fa-trash"></i></button>
+                </div>
+            </div>
+        `;
+    });
+}
+
+function addServiceSlider() {
+    const title = document.getElementById('newSliderTitle').value.trim();
+    const type = document.getElementById('newSliderType').value;
+    const categoryId = document.getElementById('newSliderCategory').value;
+    
+    if (!title) { showToast('عنوان اسلایدر الزامی است!', 'error'); return; }
+    
+    let sliders = getServiceSliders();
+    const id = Date.now().toString();
+    sliders.push({ id, title, type, categoryId: type === 'items' ? categoryId : null });
+    saveServiceSliders(sliders);
+    
+    document.getElementById('newSliderTitle').value = '';
+    renderAdminServiceSliders();
+    showToast('اسلایدر جدید به صفحه خدمات اضافه شد!', 'success');
+}
+
+function deleteServiceSlider(id) {
+    if (confirm('حذف شود؟')) {
+        let sliders = getServiceSliders().filter(s => s.id !== id);
+        saveServiceSliders(sliders);
+        renderAdminServiceSliders();
+        showToast('اسلایدر حذف شد.', 'success');
+    }
+}
+
+function moveServiceSlider(id, direction) {
+    let sliders = getServiceSliders();
+    const index = sliders.findIndex(s => s.id === id);
+    if (direction === 'up' && index > 0) [sliders[index], sliders[index-1]] = [sliders[index-1], sliders[index]];
+    else if (direction === 'down' && index < sliders.length - 1) [sliders[index], sliders[index+1]] = [sliders[index+1], sliders[index]];
+    saveServiceSliders(sliders);
+    renderAdminServiceSliders();
+}
+
+// =========================================
+// ۱.۶. مدیریت اسلایدرهای صفحه خانه (جدید)
+// =========================================
+function updateHomeSliderCategoryDropdown() {
+    const select = document.getElementById('newHomeSliderCategory');
+    if (!select) return;
+    select.innerHTML = '';
+    getCategories().forEach(cat => {
+        if (cat.id.toLowerCase() !== 'service') {
+            select.innerHTML += `<option value="${cat.id}">${cat.name}</option>`;
+        }
+    });
+}
+
+function renderAdminHomeSliders() {
+    const list = document.getElementById('admin-home-sliders-list');
+    if (!list) return;
+    list.innerHTML = '';
+    const sliders = getHomeSliders();
+    
+    sliders.forEach((slider, index) => {
+        list.innerHTML += `
+            <div class="admin-item-row" style="padding: 10px; display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--border-color); background:rgba(0,0,0,0.1); border-radius:8px;">
+                <div>
+                    <strong style="color:var(--primary-orange);">${slider.title}</strong>
+                    <br><span style="font-size:0.8rem; color:var(--text-muted);">دسته: ${slider.categoryId}</span>
+                </div>
+                <div style="display:flex; gap:5px;">
+                    <button onclick="moveHomeSlider('${slider.id}', 'up')" style="background:var(--text-muted); color:#fff; border:none; padding:5px; border-radius:5px; ${index === 0 ? 'opacity: 0.3; pointer-events: none;' : ''}"><i class="fas fa-arrow-up"></i></button>
+                    <button onclick="moveHomeSlider('${slider.id}', 'down')" style="background:var(--text-muted); color:#fff; border:none; padding:5px; border-radius:5px; ${index === sliders.length - 1 ? 'opacity: 0.3; pointer-events: none;' : ''}"><i class="fas fa-arrow-down"></i></button>
+                    <button onclick="deleteHomeSlider('${slider.id}')" style="background:var(--danger); color:#fff; border:none; padding:5px; border-radius:5px;"><i class="fas fa-trash"></i></button>
+                </div>
+            </div>
+        `;
+    });
+}
+
+function addHomeSlider() {
+    const title = document.getElementById('newHomeSliderTitle').value.trim();
+    const categoryId = document.getElementById('newHomeSliderCategory').value;
+    
+    if (!title) { showToast('عنوان اسلایدر الزامی است!', 'error'); return; }
+    if (!categoryId) { showToast('دسته‌بندی الزامی است!', 'error'); return; }
+    
+    let sliders = getHomeSliders();
+    const id = Date.now().toString();
+    sliders.push({ id, title, categoryId });
+    saveHomeSliders(sliders);
+    
+    document.getElementById('newHomeSliderTitle').value = '';
+    renderAdminHomeSliders();
+    showToast('اسلایدر جدید به صفحه خانه اضافه شد!', 'success');
+}
+
+function deleteHomeSlider(id) {
+    if (confirm('حذف شود؟')) {
+        let sliders = getHomeSliders().filter(s => s.id !== id);
+        saveHomeSliders(sliders);
+        renderAdminHomeSliders();
+        showToast('اسلایدر حذف شد.', 'success');
+    }
+}
+
+function moveHomeSlider(id, direction) {
+    let sliders = getHomeSliders();
+    const index = sliders.findIndex(s => s.id === id);
+    if (direction === 'up' && index > 0) [sliders[index], sliders[index-1]] = [sliders[index-1], sliders[index]];
+    else if (direction === 'down' && index < sliders.length - 1) [sliders[index], sliders[index+1]] = [sliders[index+1], sliders[index]];
+    saveHomeSliders(sliders);
+    renderAdminHomeSliders();
+}
+
+// =========================================
 // ۲. مدیریت آمار سایت
 // =========================================
 function loadStats() {
-    const stats = JSON.parse(localStorage.getItem('bloxStats')) || { orders: '', rating: '' };
+    const stats = JSON.parse(localStorage.getItem('bloxStats')) || { orders: '', rating: '', year: '۱۴۰۴' };
     const ordersEl = document.getElementById('set-orders');
     const ratingEl = document.getElementById('set-rating');
+    const yearEl = document.getElementById('set-year');
+    
     if (ordersEl) ordersEl.value = stats.orders || '';
     if (ratingEl) ratingEl.value = stats.rating || '';
+    if (yearEl) yearEl.value = stats.year || '۱۴۰۴';
 }
 
 function saveStats() {
     const orders = document.getElementById('set-orders').value;
     const rating = document.getElementById('set-rating').value;
-    localStorage.setItem('bloxStats', JSON.stringify({ orders, rating }));
-    showToast('آمار سایت ذخیره شد!', 'success');
+    const year = document.getElementById('set-year').value.trim() || '۱۴۰۴'; // اگر خالی بود، ۱۴۰۴ بذار
+    
+    localStorage.setItem('bloxStats', JSON.stringify({ orders, rating, year }));
+    showToast('تنظیمات با موفقیت ذخیره شد!', 'success');
 }
 
 // =========================================
@@ -194,7 +349,7 @@ function toggleStatus(id) {
 }
 
 // =========================================
-// ۴. مدیریت خدمات
+// ۴. مدیریت خدمات (توضیحات)
 // =========================================
 document.getElementById('serviceImgFile')?.addEventListener('change', function(e) {
     const file = e.target.files[0];
@@ -288,10 +443,9 @@ function renderAdminServices() {
 }
 
 // =========================================
-// ۵. اسلایدرها
+// ۵. اسلایدرهای صفحه اصلی (مدیریت آیتم‌ها)
 // =========================================
 function renderAdminSliders() {
-    // نابودی Swiperهای قبلی برای جلوگیری از listener تکراری
     adminSwipers.forEach(s => { try { s.destroy(true, true); } catch(e){} });
     adminSwipers = [];
 
@@ -300,6 +454,8 @@ function renderAdminSliders() {
     container.innerHTML = ''; 
 
     getCategories().forEach(category => {
+        if (category.id.toLowerCase() === 'service') return; // در این بخش خدمات را نشان نمی‌دهیم
+
         container.insertAdjacentHTML('beforeend', `
             <div class="slider-section" id="section-${category.id}">
                 <h3 style="color: ${category.color};">${category.name}</h3>
@@ -341,36 +497,17 @@ function renderAdminSliders() {
 }
 
 // =========================================
-// ۶. تم و بنر (اصلاح‌شده و null-safe)
+// ۶. تم و بنر
 // =========================================
 function loadSeasonTheme() {
     const theme = localStorage.getItem('bloxSeasonTheme') || 'default';
     const themeSelect = document.getElementById('seasonThemeSelect');
     if (themeSelect) themeSelect.value = theme;
-
-    const banner = JSON.parse(localStorage.getItem('bloxCustomBanner')) || { text: '', status: 'off' };
-    const bannerTextEl = document.getElementById('customBannerText');
-    const bannerStatusEl = document.getElementById('customBannerStatus');
-    if (bannerTextEl) bannerTextEl.value = banner.text;
-    if (bannerStatusEl) bannerStatusEl.value = banner.status;
 }
 
 function saveSeasonTheme() {
     localStorage.setItem('bloxSeasonTheme', document.getElementById('seasonThemeSelect').value);
     showToast('تم سایت تغییر کرد! صفحه را رفرش کنید.', 'success');
-}
-
-function saveCustomBanner() {
-    const textEl = document.getElementById('customBannerText');
-    const statusEl = document.getElementById('customBannerStatus');
-    if (!textEl || !statusEl) {
-        showToast('فیلدهای بنر سفارشی در صفحه وجود ندارند.', 'error');
-        return;
-    }
-    const text = textEl.value.trim();
-    const status = statusEl.value;
-    localStorage.setItem('bloxCustomBanner', JSON.stringify({ text, status }));
-    showToast('بنر عادی ذخیره شد! صفحه را رفرش کنید.', 'success');
 }
 
 // =========================================
@@ -465,11 +602,18 @@ function clearAllOrders() {
 // اجرای اولیه
 // =========================================
 document.addEventListener('DOMContentLoaded', () => {
-    try { loadStats(); } catch(e) { console.warn('loadStats:', e); }
-    try { updateCategoryDropdown(); } catch(e) { console.warn('updateCategoryDropdown:', e); }
-    try { renderAdminCategories(); } catch(e) { console.warn('renderAdminCategories:', e); }
-    try { renderAdminSliders(); } catch(e) { console.warn('renderAdminSliders:', e); }
-    try { renderAdminServices(); } catch(e) { console.warn('renderAdminServices:', e); }
-    try { loadSeasonTheme(); } catch(e) { console.warn('loadSeasonTheme:', e); }
-    try { renderAdminOrders(); } catch(e) { console.warn('renderAdminOrders:', e); }
+    try { loadStats(); } catch(e) { console.warn(e); }
+    try { updateCategoryDropdown(); } catch(e) { console.warn(e); }
+    try { renderAdminCategories(); } catch(e) { console.warn(e); }
+    
+    try { updateServiceSliderCategoryDropdown(); } catch(e) { console.warn(e); }
+    try { renderAdminServiceSliders(); } catch(e) { console.warn(e); }
+    
+    try { updateHomeSliderCategoryDropdown(); } catch(e) { console.warn(e); }
+    try { renderAdminHomeSliders(); } catch(e) { console.warn(e); }
+    
+    try { renderAdminSliders(); } catch(e) { console.warn(e); }
+    try { renderAdminServices(); } catch(e) { console.warn(e); }
+    try { loadSeasonTheme(); } catch(e) { console.warn(e); }
+    try { renderAdminOrders(); } catch(e) { console.warn(e); }
 });

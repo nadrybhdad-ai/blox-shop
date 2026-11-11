@@ -218,3 +218,91 @@
     font-weight: bold;
     z-index: 2;
 }
+/* =========================================
+   فوتر (مشابه صفحه تماس)
+========================================= */
+.site-footer {
+    background: var(--card-bg);
+    border-top: 2px solid var(--primary-blue);
+    padding: 50px 5% 30px;
+    margin-top: 60px;
+    position: relative;
+}
+
+.footer-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 25px;
+}
+
+.footer-logo img {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    border: 2px solid var(--primary-blue);
+    box-shadow: 0 0 20px rgba(0, 210, 255, 0.4);
+    margin-bottom: 10px;
+}
+
+.footer-logo h3 {
+    color: var(--primary-blue);
+    font-size: 1.5rem;
+    margin-bottom: 5px;
+    text-shadow: 0 0 10px rgba(0, 210, 255, 0.4);
+}
+
+.footer-logo p {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+}
+
+.made-by {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 28px;
+    background: linear-gradient(45deg, rgba(0, 210, 255, 0.1), rgba(255, 140, 0, 0.1));
+    border: 1px solid var(--border-color);
+    border-radius: 30px;
+    font-size: 0.95rem;
+    color: var(--text-muted);
+    position: relative;
+    transition: 0.3s;
+    direction: ltr;
+    font-family: 'Vazirmatn', sans-serif;
+}
+
+.made-by:hover {
+    border-color: var(--primary-orange);
+    box-shadow: 0 0 25px rgba(255, 140, 0, 0.3);
+    transform: translateY(-3px);
+}
+
+.made-by .heart {
+    color: var(--danger);
+    animation: heartPulse 1.5s infinite;
+}
+
+.made-by strong {
+    color: var(--primary-orange);
+    font-weight: 900;
+    letter-spacing: 0.5px;
+    text-shadow: 0 0 10px rgba(255, 140, 0, 0.3);
+}
+
+@keyframes heartPulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.25); }
+}
+
+.footer-copy {
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    padding-top: 20px;
+    border-top: 1px solid var(--border-color);
+    width: 100%;
+}

@@ -1,65 +1,205 @@
 // js/items.js
-const itemsGrid = document.getElementById('items-grid');
-const filtersContainer = document.getElementById('filters-container');
-const items = getItems();
-const categories = getCategories();
 
-// ۱. ساخت دکمه‌های فیلتر
-function renderFilters() {
-    let html = `<button class="filter-btn active" data-filter="all" style="--cat-color: var(--primary-orange);">همه</button>`;
+document.addEventListener('DOMContentLoaded', () => {
+    const itemsGrid = document.getElementById('items-grid');
+    const filtersContainer = document.getElementById('filters-container');
+    const emptyState = document.getElementById('empty-state');
+    const sortSelect = document.getElementById('sortSelect');
+    const headerSearchInput = document.getElementById('globalSearchInput'); 
     
-    categories.forEach(cat => {
-        if(cat.id === 'Service') return;
-        html += `
-            <button class="filter-btn" data-filter="${cat.id}" style="--cat-color: ${cat.color};">${cat.name}</button>
-        `;
-    });
+    const allItems = getItems();
+    const categories = getCategories();
 
-    filtersContainer.innerHTML = html;
+    let currentFilter = 'all';
+    let currentSearch = '';
+    let currentSort = 'default';
 
-    document.querySelectorAll('.filter-btn').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-            e.target.classList.add('active');
-            renderItems(e.target.dataset.filter);
-        });
-    });
-}
+    // ۱. خواندن پارامتر جستجو از URL (اگر از هدر جستجو شده باشد)
+    const urlParams = new URLSearchParams(window.location.search);
+    const urlSearch = urlParams.get('search');
+    if (urlSearch) {
+        currentSearch = urlSearch;
+        if (headerSearchInput) headerSearchInput.value = urlSearch; 
+    }
 
-// ۲. نمایش آیتم‌ها
-function renderItems(filter = 'all') {
-    itemsGrid.innerHTML = '';
-    const filtered = filter === 'all' ? items.filter(i => i.category !== 'Service') : items.filter(i => i.category === filter);
-    
-    filtered.forEach(item => {
-        const catInfo = categories.find(c => c.id === item.category) || { color: 'var(--primary-blue)' };
-        const isOutOfStock = item.status === false;
+    // تابع کمکی برای تبدیل قیمت (رشته) به عدد واقعی برای مرتب‌سازی
+    function parsePriceToNumber(priceStr) {
+        if (!priceStr) return 0;
+        // تبدیل اعداد فارسی به انگلیسی
+        const persianNumbers = [/۰/g, /۱/g, /۲/g, /۳/g, /۴/g, /۵/g, /۶/g, /۷/g, /۸/g, /۹/g];
+        for (let i = 0; i < 10; i++) {
+            priceStr = priceStr.toString().replace(persianNumbers[i], i);
+        }
+        // حذف هر کاراکتری که عدد نیست (مثل کاما، تومان، فاصله و...)
+        const numericString = priceStr.replace(/[^\d]/g, '');
+        return parseInt(numericString) || 0;
+    }
+
+    // ۲. ساخت دکمه‌های فیلتر
+    function renderFilters() {
+        if(!filtersContainer) return;
+        let html = `<button class="filter-btn active" data-filter="all" style="--cat-color: var(--primary-orange);">همه</button>`;
         
-        const btnHTML = isOutOfStock 
-            ? `<button class="btn-buy" style="background:var(--danger); color:white; border-color:var(--danger); cursor:not-allowed;">ناموجود</button>`
-            : `<button class="btn-buy" onclick="addToCart(${item.id}, '${item.name}', '${item.price}', '${item.img}')">افزودن به سبد خرید</button>`;
+        categories.forEach(cat => {
+            if(cat.id.toLowerCase() === 'service') return;
+            html += `
+                <button class="filter-btn" data-filter="${cat.id}" style="--cat-color: ${cat.color};">${cat.name}</button>
+            `;
+        });
 
-        itemsGrid.innerHTML += `
-            <div class="product-card" style="${isOutOfStock ? 'opacity: 0.8;' : ''}">
+        filtersContainer.innerHTML = html;
+
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                // جلوگیری از کلیک ناخواسته وقتی کاربر در حال کشیدن (Drag) اسلایدر است
+                if (filtersContainer.dataset.dragging === 'true') {
+                    return;
+                }
+
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                e.target.classList.add('active');
+                currentFilter = e.target.dataset.filter;
                 
-                <!-- باکس برچسب‌ها (دسته‌بندی و موجودی) -->
-                <div class="product-badges">
-                    <div class="badge" style="background: ${catInfo.color};">${item.category}</div>
-                    <div class="badge" style="background: ${isOutOfStock ? 'var(--danger)' : '#00cc66'};">${isOutOfStock ? 'ناموجود' : 'موجود'}</div>
+                // اگر روی فیلتر کلیک شد، جستجو پاک شود تا فیلترها به درستی کار کنند
+                if (currentSearch !== '') {
+                    currentSearch = '';
+                    if(headerSearchInput) headerSearchInput.value = '';
+                    window.history.replaceState({}, '', window.location.pathname);
+                }
+                
+                applyFilters();
+            });
+        });
+    }
+
+    // ۳. اعمال همزمان فیلتر، جستجو و مرتب‌سازی
+    function applyFilters() {
+        let filtered = [];
+
+        if (currentSearch.trim() !== '') {
+            // حالت جستجو: هم آیتم‌ها و هم خدمات را فیلتر میکنیم
+            filtered = allItems.filter(i => i.name.toLowerCase().includes(currentSearch.toLowerCase().trim()));
+        } else {
+            // حالت عادی: فقط آیتم‌های فروشگاه (خدمات نمایش داده نمیشوند)
+            filtered = allItems.filter(i => i.category.toLowerCase() !== 'service');
+            if (currentFilter !== 'all') {
+                filtered = filtered.filter(i => i.category === currentFilter);
+            }
+        }
+
+        // مرتب‌سازی (با استفاده از تابع تبدیل قیمت به عدد)
+        if (currentSort === 'price-low') {
+            filtered.sort((a, b) => parsePriceToNumber(a.price) - parsePriceToNumber(b.price));
+        } else if (currentSort === 'price-high') {
+            filtered.sort((a, b) => parsePriceToNumber(b.price) - parsePriceToNumber(a.price));
+        } else if (currentSort === 'name-az') {
+            filtered.sort((a, b) => a.name.localeCompare(b.name));
+        }
+
+        // نمایش
+        renderItemsHTML(filtered);
+    }
+
+    // ۴. رندر کردن HTML کارت‌ها
+    function renderItemsHTML(filteredItems) {
+        if(!itemsGrid) return;
+        itemsGrid.innerHTML = '';
+        
+        if (filteredItems.length === 0) {
+            if(emptyState) emptyState.style.display = 'block';
+            return;
+        }
+        if(emptyState) emptyState.style.display = 'none';
+
+        filteredItems.forEach(item => {
+            const catInfo = categories.find(c => c.id === item.category) || { color: 'var(--primary-blue)' };
+            const isOutOfStock = item.status === false;
+            
+            const btnHTML = isOutOfStock 
+                ? `<button class="btn-buy" style="background:var(--danger); color:white; border-color:var(--danger); cursor:not-allowed;">ناموجود</button>`
+                : `<button class="btn-buy" onclick="addToCart(${item.id})">افزودن به سبد خرید</button>`;
+
+            itemsGrid.innerHTML += `
+                <div class="product-card" style="${isOutOfStock ? 'opacity: 0.8;' : ''}">
+                    
+                    <div class="product-badges">
+                        <div class="badge" style="background: ${catInfo.color};">${item.category}</div>
+                        <div class="badge" style="background: ${isOutOfStock ? 'var(--danger)' : '#00cc66'};">${isOutOfStock ? 'ناموجود' : 'موجود'}</div>
+                    </div>
+
+                    <img src="${item.img}" alt="${item.name}" loading="lazy" style="${isOutOfStock ? 'filter: grayscale(100%);' : ''}">
+                    
+                    <div class="product-info">
+                        <h3 style="color: ${catInfo.color};">${item.name}</h3>
+                        <p class="price">${item.price} تومان</p>
+                    </div>
+                    
+                    ${btnHTML}
                 </div>
+            `;
+        });
+    }
 
-                <img src="${item.img}" alt="${item.name}" loading="lazy" style="${isOutOfStock ? 'filter: grayscale(100%);' : ''}">
-                
-                <div class="product-info">
-                    <h3 style="color: ${catInfo.color};">${item.name}</h3>
-                    <p class="price">${item.price} تومان</p>
-                </div>
-                
-                ${btnHTML}
-            </div>
-        `;
-    });
-}
+    // ۵. رویدادهای مربوط به جستجو و مرتب‌سازی
+    if (headerSearchInput) {
+        headerSearchInput.addEventListener('input', (e) => {
+            currentSearch = e.target.value;
+            applyFilters();
+            
+            const newUrl = currentSearch ? `?search=${encodeURIComponent(currentSearch)}` : window.location.pathname;
+            window.history.replaceState({}, '', newUrl);
+        });
+    }
 
-renderFilters();
-renderItems();
+    if (sortSelect) {
+        sortSelect.addEventListener('change', (e) => {
+            currentSort = e.target.value;
+            applyFilters();
+        });
+    }
+
+    // ۶. قابلیت کشیدن با موس (Drag to scroll) برای اسلایدر فیلترها
+    let isDown = false;
+    let startX;
+    let scrollLeft;
+
+    if (filtersContainer) {
+        filtersContainer.addEventListener('mousedown', (e) => {
+            isDown = true;
+            filtersContainer.dataset.dragging = 'false'; // ریست کردن حالت درگ
+            filtersContainer.style.cursor = 'grabbing';
+            startX = e.pageX - filtersContainer.offsetLeft;
+            scrollLeft = filtersContainer.scrollLeft;
+        });
+
+        filtersContainer.addEventListener('mouseleave', () => {
+            isDown = false;
+            filtersContainer.style.cursor = 'grab';
+        });
+
+        filtersContainer.addEventListener('mouseup', () => {
+            isDown = false;
+            filtersContainer.style.cursor = 'grab';
+            // اگر واقعا درگ شده بود، بعد از کلیک، متغیر رو ریست میکنیم
+            setTimeout(() => { filtersContainer.dataset.dragging = 'false'; }, 50);
+        });
+
+        filtersContainer.addEventListener('mousemove', (e) => {
+            if (!isDown) return;
+            e.preventDefault();
+            const x = e.pageX - filtersContainer.offsetLeft;
+            const walk = (x - startX) * 2; 
+            
+            // اگر بیش از 5 پیکسل حرکت کرد، یعنی کاربر داره میکشه (نه کلیک)
+            if (Math.abs(walk) > 5) {
+                filtersContainer.dataset.dragging = 'true';
+            }
+            
+            filtersContainer.scrollLeft = scrollLeft - walk;
+        });
+    }
+
+    // اجرای اولیه
+    renderFilters();
+    applyFilters();
+});

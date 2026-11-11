@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/home.css">
     <link rel="stylesheet" href="css/admin.css">
-        <link rel="shortcut icon" href="./images/logo.jpg" type="image/x-icon">
+    <link rel="shortcut icon" href="./images/logo.jpg" type="image/x-icon">
 </head>
 <body>
     <header>
@@ -33,12 +33,14 @@
         <div class="admin-dashboard">
             <!-- ستون راست -->
             <div class="admin-column">
-                <!-- تنظیمات آمار -->
+                               <!-- تنظیمات آمار -->
                 <div class="admin-card" style="border-top-color: var(--primary-orange);">
-                    <h3><i class="fas fa-chart-line" style="color:var(--primary-orange);"></i> تنظیمات آمار</h3>
+                    <h3><i class="fas fa-chart-line" style="color:var(--primary-orange);"></i> تنظیمات آمار و فوتر</h3>
                     <input type="text" id="set-orders" placeholder="تعداد خرید موفق (مثلا +۳,۰۰۰)">
                     <input type="text" id="set-rating" placeholder="امتیاز رضایت (مثلا ۵ / ۵)">
-                    <button onclick="saveStats()" class="btn" style="background:var(--primary-orange); width:100%;">ذخیره آمار</button>
+                    <!-- 👇 فیلد جدید برای سال 👇 -->
+                    <input type="text" id="set-year" placeholder="سال کپی‌رایت (مثلا ۱۴۰۴)">
+                    <button onclick="saveStats()" class="btn" style="background:var(--primary-orange); width:100%;">ذخیره تنظیمات</button>
                 </div>
 
                 <!-- تنظیمات تم مناسبت‌ها -->
@@ -63,6 +65,34 @@
                     </div>
                     <button onclick="addCategory()" class="btn" style="background:var(--primary-blue); width:100%; margin-top:10px;">افزودن دسته‌بندی</button>
                     <div id="admin-categories-list" style="max-height: 200px; overflow-y: auto; margin-top:15px;"></div>
+                </div>
+
+                <!-- مدیریت اسلایدرهای صفحه خدمات -->
+                <div class="admin-card" style="border-top-color: #ffd700; margin-top: 20px;">
+                    <h3><i class="fas fa-sliders-h" style="color:#ffd700;"></i> مدیریت اسلایدرهای صفحه خدمات</h3>
+                    
+                    <div style="display:flex; gap:10px; margin-bottom:15px; flex-wrap:wrap;">
+                        <input type="text" id="newSliderTitle" placeholder="عنوان اسلایدر (مثلا: خدمات ویژه)" style="margin:0; flex:1; min-width:150px;">
+                        <select id="newSliderType" style="margin:0; width:130px;">
+                            <option value="items">لیست آیتم‌ها</option>
+                            <option value="services">توضیحات خدمات</option>
+                        </select>
+                        <select id="newSliderCategory" style="margin:0; width:130px;"></select>
+                        <button onclick="addServiceSlider()" class="btn" style="background:#ffd700; color:#000; width:100%; margin-top: 5px;">افزودن اسلایدر جدید</button>
+                    </div>
+                    <div id="admin-service-sliders-list" style="display:flex; flex-direction:column; gap:10px; max-height:300px; overflow-y:auto;"></div>
+                </div>
+
+                <!-- مدیریت اسلایدرهای صفحه خانه (جدید) -->
+                <div class="admin-card" style="border-top-color: var(--primary-orange); margin-top: 20px;">
+                    <h3><i class="fas fa-home" style="color:var(--primary-orange);"></i> مدیریت اسلایدرهای صفحه خانه</h3>
+                    
+                    <div style="display:flex; gap:10px; margin-bottom:15px; flex-wrap:wrap;">
+                        <input type="text" id="newHomeSliderTitle" placeholder="عنوان اسلایدر (مثلا: میوه‌های خاص)" style="margin:0; flex:1; min-width:150px;">
+                        <select id="newHomeSliderCategory" style="margin:0; width:150px;"></select>
+                        <button onclick="addHomeSlider()" class="btn" style="background:var(--primary-orange); color:#fff; width:100%; margin-top: 5px;">افزودن اسلایدر به خانه</button>
+                    </div>
+                    <div id="admin-home-sliders-list" style="display:flex; flex-direction:column; gap:10px; max-height:300px; overflow-y:auto;"></div>
                 </div>
             </div>
 
@@ -114,7 +144,7 @@
             <div id="admin-services-list" style="max-height: 300px; overflow-y: auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 10px;"></div>
         </div>
 
-               <!-- بخش مدیریت سفارش‌ها و کاربران -->
+        <!-- بخش مدیریت سفارش‌ها و کاربران -->
         <div class="admin-card" style="margin-top: 30px; border-top-color: #00cc66;">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 20px;">
                 <h3><i class="fas fa-shopping-bag" style="color:#00cc66;"></i> مدیریت سفارش‌ها</h3>
@@ -123,7 +153,6 @@
                         <span style="color:var(--text-muted);">کاربران: </span>
                         <strong id="total-users-count" style="color:#00cc66; font-size:1.2rem;">0</strong>
                     </div>
-                    <!-- دکمه ریست سفارش ها -->
                     <button onclick="clearAllOrders()" class="btn" style="background:var(--danger); font-size:0.8rem; padding:8px 12px;"><i class="fas fa-trash-alt"></i> پاک کردن سفارش‌های تستی</button>
                 </div>
             </div>
@@ -131,8 +160,8 @@
             <div id="admin-orders-list" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 20px; max-height: 500px; overflow-y: auto;"></div>
         </div>
 
-        <!-- مدیریت اسلایدرها -->
-        <h2 class="page-title" style="margin-top: 60px;">مدیریت اسلایدرها</h2>
+        <!-- مدیریت اسلایدرهای صفحه اصلی (مربوط به آیتم‌های داخل دسته‌ها) -->
+        <h2 class="page-title" style="margin-top: 60px;">مدیریت آیتم‌های اسلایدرها</h2>
         <div id="admin-sliders-container"></div>
     </main>
 

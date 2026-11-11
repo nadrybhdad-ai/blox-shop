@@ -1,0 +1,250 @@
+/* css/contact.css */
+
+.contact-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 60px 5% 80px;
+    min-height: calc(100vh - 400px);
+}
+
+.contact-title {
+    text-align: center;
+    font-size: 2.5rem;
+    color: var(--primary-orange);
+    margin-bottom: 15px;
+    text-shadow: 0 0 20px rgba(255, 140, 0, 0.3);
+}
+
+.contact-subtitle {
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 1.05rem;
+    margin-bottom: 60px;
+    line-height: 1.8;
+}
+
+.contact-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 30px;
+    margin-bottom: 50px;
+}
+
+.contact-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 20px;
+    padding: 40px 30px;
+    text-align: center;
+    transition: all 0.35s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.contact-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: var(--card-color, var(--primary-blue));
+    box-shadow: 0 0 20px var(--card-color, var(--primary-blue));
+}
+
+.contact-card:hover {
+    transform: translateY(-8px);
+    border-color: var(--card-color, var(--primary-blue));
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3),
+                0 0 30px var(--card-color, rgba(0, 210, 255, 0.3));
+}
+
+.contact-icon {
+    width: 80px;
+    height: 80px;
+    margin: 0 auto 20px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--card-color, var(--primary-blue));
+    border: 2px solid var(--card-color, var(--primary-blue));
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.2),
+                inset 0 0 15px rgba(0, 0, 0, 0.2);
+    transition: 0.3s;
+}
+
+.contact-card:hover .contact-icon {
+    transform: scale(1.1) rotate(5deg);
+}
+
+.contact-card h3 {
+    font-size: 1.3rem;
+    margin-bottom: 20px;
+    color: var(--text-color);
+    font-weight: 900;
+}
+
+.contact-value {
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: var(--card-color, var(--primary-blue));
+    padding: 14px 20px;
+    background: rgba(0, 0, 0, 0.25);
+    border-radius: 12px;
+    display: inline-block;
+    direction: ltr;
+    letter-spacing: 1px;
+    border: 1px dashed var(--card-color, var(--primary-blue));
+    transition: 0.3s;
+    margin-bottom: 10px;
+}
+
+.contact-value:hover {
+    background: rgba(0, 0, 0, 0.4);
+    transform: scale(1.03);
+}
+
+.contact-value a {
+    color: inherit;
+    text-decoration: none;
+}
+
+.contact-hint {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    margin-top: 10px;
+}
+
+/* باکس نکته */
+.contact-note {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-right: 4px solid var(--primary-blue);
+    padding: 20px 25px;
+    border-radius: 12px;
+    max-width: 700px;
+    margin: 0 auto;
+}
+
+.contact-note p {
+    color: var(--text-muted);
+    font-size: 0.95rem;
+    line-height: 1.7;
+    margin: 0;
+}
+
+/* =========================================
+   فوتر
+========================================= */
+.site-footer {
+    background: var(--card-bg);
+    border-top: 2px solid var(--primary-blue);
+    padding: 50px 5% 30px;
+    margin-top: 60px;
+    position: relative;
+}
+
+.footer-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 25px;
+}
+
+.footer-logo img {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    border: 2px solid var(--primary-blue);
+    box-shadow: 0 0 20px rgba(0, 210, 255, 0.4);
+    margin-bottom: 10px;
+}
+
+.footer-logo h3 {
+    color: var(--primary-blue);
+    font-size: 1.5rem;
+    margin-bottom: 5px;
+    text-shadow: 0 0 10px rgba(0, 210, 255, 0.4);
+}
+
+.footer-logo p {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+}
+
+/* بخش Made by Behdad Naderi */
+.made-by {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 28px;
+    background: linear-gradient(45deg, rgba(0, 210, 255, 0.1), rgba(255, 140, 0, 0.1));
+    border: 1px solid var(--border-color);
+    border-radius: 30px;
+    font-size: 0.95rem;
+    color: var(--text-muted);
+    position: relative;
+    transition: 0.3s;
+}
+
+.made-by:hover {
+    border-color: var(--primary-orange);
+    box-shadow: 0 0 25px rgba(255, 140, 0, 0.3);
+    transform: translateY(-3px);
+}
+
+.made-by .heart {
+    color: var(--danger);
+    animation: heartPulse 1.5s infinite;
+}
+
+/* بخش Made by Behdad Naderi */
+.made-by {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 28px;
+    background: linear-gradient(45deg, rgba(0, 210, 255, 0.1), rgba(255, 140, 0, 0.1));
+    border: 1px solid var(--border-color);
+    border-radius: 30px;
+    font-size: 0.95rem;
+    color: var(--text-muted);
+    position: relative;
+    transition: 0.3s;
+    
+    /* 👇 این خط مشکل برعکس بودن جمله رو حل میکنه 👇 */
+    direction: ltr; 
+    font-family: 'Vazirmatn', sans-serif; /* برای اینکه فونتش هماهنگ بمونه */
+}
+
+@keyframes heartPulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.25); }
+}
+
+.footer-copy {
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    padding-top: 20px;
+    border-top: 1px solid var(--border-color);
+    width: 100%;
+}
+
+/* ریسپانسیو */
+@media (max-width: 768px) {
+    .contact-title { font-size: 2rem; }
+    .contact-subtitle { font-size: 0.95rem; margin-bottom: 40px; }
+    .contact-grid { grid-template-columns: 1fr; gap: 20px; }
+    .contact-card { padding: 30px 20px; }
+    .contact-note { flex-direction: column; text-align: center; }
+    .made-by { font-size: 0.85rem; padding: 10px 20px; }
+}

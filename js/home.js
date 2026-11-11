@@ -1,24 +1,25 @@
 // js/home.js
-const homeItems = JSON.parse(localStorage.getItem('bloxItems')) || [];
 const categories = JSON.parse(localStorage.getItem('bloxCategories')) || [];
 
-// ۱. رندر اسلایدرها
+// ۱. رندر اسلایدرها (داینامیک از تنظیمات ادمین)
 function renderHomeSliders() {
     const container = document.getElementById('home-sliders-container');
     if (!container) return;
     container.innerHTML = '';
 
-    categories.forEach(category => {
-        // اسلایدر "خدمات" را در صفحه خانه نشان نمی‌دهیم (case-insensitive)
-        if (category.id.toLowerCase() === 'service') return;
+    const sliders = getHomeSliders(); // از app.js میاد
+    const homeItems = getItems();
 
-        const filtered = homeItems.filter(i => i.category === category.id);
+    sliders.forEach(slider => {
+        const filtered = homeItems.filter(i => i.category === slider.categoryId);
         if (filtered.length === 0) return; 
+
+        const catInfo = categories.find(c => c.id === slider.categoryId) || { color: 'var(--primary-blue)' };
 
         const sliderHTML = `
             <div class="slider-section">
-                <h3 style="color: ${category.color}; border-bottom-color: ${category.color};">${category.name}</h3>
-                <div class="swiper mySwiper" id="swiper-${category.id}">
+                <h3 style="color: ${catInfo.color}; border-bottom-color: ${catInfo.color};">${slider.title}</h3>
+                <div class="swiper mySwiper" id="swiper-${slider.id}">
                     <div class="swiper-wrapper"></div>
                     <div class="swiper-button-next"></div>
                     <div class="swiper-button-prev"></div>
@@ -27,7 +28,7 @@ function renderHomeSliders() {
         `;
         container.insertAdjacentHTML('beforeend', sliderHTML);
 
-        const wrapper = document.querySelector(`#swiper-${category.id} .swiper-wrapper`);
+        const wrapper = document.querySelector(`#swiper-${slider.id} .swiper-wrapper`);
         
         filtered.forEach(item => {
             const isOutOfStock = item.status === false;
@@ -42,16 +43,16 @@ function renderHomeSliders() {
             wrapper.innerHTML += `
                 <div class="swiper-slide" style="${isOutOfStock ? 'opacity: 0.8;' : ''}">
                     <img src="${item.img}" alt="${item.name}" loading="lazy" style="${isOutOfStock ? 'filter: grayscale(100%);' : ''}">
-                    <h4 style="color: ${category.color};">${item.name} ${statusText}</h4>
+                    <h4 style="color: ${catInfo.color};">${item.name} ${statusText}</h4>
                     <p style="color:var(--primary-blue); font-weight:bold; margin-top:5px;">${item.price} تومان</p>
                     ${btnHTML}
                 </div>
             `;
         });
 
-        new Swiper(`#swiper-${category.id}`, {
+        new Swiper(`#swiper-${slider.id}`, {
             slidesPerView: 'auto', spaceBetween: 20, centerInsufficientSlides: true,
-            navigation: { nextEl: `#swiper-${category.id} .swiper-button-next`, prevEl: `#swiper-${category.id} .swiper-button-prev` }
+            navigation: { nextEl: `#swiper-${slider.id} .swiper-button-next`, prevEl: `#swiper-${slider.id} .swiper-button-prev` }
         });
     });
 }
@@ -62,14 +63,14 @@ function renderHomeServicesBanner() {
     if (!banner) return;
 
     const serviceDescs = JSON.parse(localStorage.getItem('bloxServices')) || [];
-    
     const viewAllBtn = banner.querySelector('a');
 
     if (serviceDescs.length > 0) {
-        banner.innerHTML = '';
+        let html = '';
         
+        // ساخت کارت‌های خدمات
         serviceDescs.slice(0, 4).forEach(service => {
-            banner.innerHTML += `
+            html += `
                 <div class="service-mini-card">
                     <i class="${service.icon}"></i>
                     <h3>${service.title}</h3>
@@ -78,10 +79,18 @@ function renderHomeServicesBanner() {
             `;
         });
         
-        if (viewAllBtn) banner.appendChild(viewAllBtn);
+        // قرار دادن دکمه در یک ردیف جداگانه در پایین
+        if (viewAllBtn) {
+            html += `
+                <div style="width: 100%; display: flex; justify-content: center; margin-top: 15px;">
+                    <a href="services.html" class="btn-primary" style="min-width: 200px;">مشاهده تمام خدمات</a>
+                </div>
+            `;
+        }
+        
+        banner.innerHTML = html;
     }
 }
-
 // ۳. نمایش آمار
 document.addEventListener('DOMContentLoaded', () => {
     const stats = JSON.parse(localStorage.getItem('bloxStats'));

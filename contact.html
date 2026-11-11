@@ -1,12 +1,128 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fa">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-        <link rel="shortcut icon" href="./images/logo.jpg" type="image/x-icon">
+    <title>تماس با ما | Blox Shop</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/contact.css">
+    <link rel="shortcut icon" href="./images/logo.jpg" type="image/x-icon">
 </head>
 <body>
-    
+    <header>
+        <div class="logo"><img src="images/logo.jpg" alt="Logo"></div>
+        <button class="mobile-menu-btn" onclick="toggleMobileMenu()"><i class="fas fa-bars"></i></button>
+        <div class="menu-overlay" onclick="toggleMobileMenu()"></div>
+        <div class="sidebar-content">
+            <button class="close-sidebar-btn" onclick="toggleMobileMenu()"><i class="fas fa-times"></i></button>
+            <nav><ul></ul></nav>
+            <div class="header-actions">
+                <button class="theme-toggle">☀️</button>
+                <div id="auth-container"></div>
+            </div>
+        </div>
+    </header>
+
+    <main class="contact-container">
+        <h1 class="contact-title">با ما در تماس باشید</h1>
+        <p class="contact-subtitle">برای سفارش، پشتیبانی یا هر سوالی از راه‌های زیر با ما در ارتباط باشید</p>
+
+        <div class="contact-grid">
+            <!-- کارت روبیکا -->
+            <div class="contact-card" style="--card-color: #9b59b6;">
+                <div class="contact-icon">
+                    <i class="fas fa-comments"></i>
+                </div>
+                <h3>روبیکا</h3>
+                <div class="contact-value" style="cursor: pointer;" onclick="copyRubika()">
+                    @Ahr51r1
+                    <i class="fas fa-copy" style="font-size: 0.85rem; margin-right: 8px; opacity: 0.7;"></i>
+                </div>
+                <p class="contact-hint">برای کپی کردن کلیک کنید</p>
+            </div>
+
+            <!-- کارت تماس تلفنی -->
+            <div class="contact-card" style="--card-color: #00cc66;">
+                <div class="contact-icon">
+                    <i class="fas fa-phone-alt"></i>
+                </div>
+                <h3>تماس تلفنی</h3>
+                <div class="contact-value">
+                    <a href="tel:09300214283">09300214283</a>
+                </div>
+                <p class="contact-hint">پاسخگویی ۹ صبح تا ۹ شب</p>
+            </div>
+
+            <!-- کارت ایمیل -->
+            <div class="contact-card" style="--card-color: var(--primary-orange);">
+                <div class="contact-icon">
+                    <i class="fas fa-envelope"></i>
+                </div>
+                <h3>ایمیل</h3>
+                <!-- ⬇️⬇️⬇️ اینجا ایمیل خودت رو بذار ⬇️⬇️⬇️ -->
+                <div class="contact-value">
+                    <a href="mailto:your-email@gmail.com">your-email@gmail.com</a>
+                </div>
+                <!-- ⬆️⬆️⬆️ اینجا ایمیل خودت رو بذار ⬆️⬆️⬆️ -->
+                <p class="contact-hint">پاسخ در کمتر از ۲۴ ساعت</p>
+            </div>
+        </div>
+
+        <!-- نکته پایین کارت‌ها -->
+        <div class="contact-note">
+            <i class="fas fa-info-circle" style="color: var(--primary-blue); font-size: 1.5rem;"></i>
+            <p>لطفاً برای پیگیری سفارشات، کد پیگیری ۵ رقمی خود را همراه پیام ارسال کنید.</p>
+        </div>
+    </main>
+
+    <!-- فوتر -->
+    <footer class="site-footer">
+        <div class="footer-content">
+            <div class="footer-logo">
+                <img src="images/logo.jpg" alt="Blox Shop">
+                <h3>Blox Shop</h3>
+                <p>مرجع تخصصی خرید آیتم‌های Blox Fruits</p>
+            </div>
+
+            <div class="made-by">
+                <i class="fas fa-code"></i>
+                Made with <i class="fas fa-heart heart"></i> by
+                <strong>Behdad Naderi</strong>
+            </div>
+
+          <p class="footer-copy">© <span class="footer-year-text">۱۴۰۴</span> Blox Shop - تمام حقوق محفوظ است</p>
+        </div>
+    </footer>
+
+    <script src="js/app.js"></script>
+    <script>
+        function copyRubika() {
+            const text = '@Ahr51r1';
+            const done = () => { if (typeof showToast === 'function') showToast('آیدی روبیکا کپی شد!', 'success'); };
+            const fail = () => { if (typeof showToast === 'function') showToast('خطا در کپی کردن!', 'error'); };
+
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(text).then(done).catch(() => {
+                    fallbackCopy(text) ? done() : fail();
+                });
+            } else {
+                fallbackCopy(text) ? done() : fail();
+            }
+        }
+
+        function fallbackCopy(text) {
+            const temp = document.createElement('textarea');
+            temp.value = text;
+            temp.style.position = 'fixed';
+            temp.style.opacity = '0';
+            document.body.appendChild(temp);
+            temp.select();
+            let ok = false;
+            try { ok = document.execCommand('copy'); } catch (e) { ok = false; }
+            document.body.removeChild(temp);
+            return ok;
+        }
+    </script>
 </body>
 </html>

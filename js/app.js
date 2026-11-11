@@ -1,6 +1,32 @@
 // js/app.js
 
 // =========================================
+// ۰. تزریق صفحه لودینگ (Preloader)
+// =========================================
+(function injectLoader() {
+    if (document.getElementById('page-loader')) return;
+    const loaderHTML = `
+        <div id="page-loader">
+            <div class="loader-spinner"></div>
+            <div class="loader-logo">Blox <span>Shop</span></div>
+        </div>
+    `;
+    document.body.insertAdjacentHTML('afterbegin', loaderHTML);
+})();
+
+// پنهان کردن لودینگ بعد از لود کامل سایت (با تاخیر ۱ ثانیه‌ای)
+window.addEventListener('load', () => {
+    setTimeout(() => {
+        const loader = document.getElementById('page-loader');
+        if (loader) {
+            loader.classList.add('hidden');
+            // حذف از DOM بعد از پایان انیمیشن محو شدن (نیم ثانیه بعد)
+            setTimeout(() => loader.remove(), 600);
+        }
+    }, 1000); // 👈 این عدد ۱۰۰۰ یعنی ۱ ثانیه (۱۰۰۰ میلی‌ثانیه) صبر کن
+});
+
+// =========================================
 // ۰. بررسی فعال بودن تم مناسبتی
 // =========================================
 function isSeasonThemeActive() {
@@ -9,7 +35,7 @@ function isSeasonThemeActive() {
 }
 
 // =========================================
-// ۱. سیستم نوتیفیکیشن (جایگزین alert)
+// ۱. سیستم نوتیفیکیشن (Toast)
 // =========================================
 function showToast(message, type = 'success') {
     let container = document.getElementById('toast-container');
@@ -36,7 +62,7 @@ function showToast(message, type = 'success') {
 }
 
 // =========================================
-// ۲. مدیریت تم (با قفل شدن در حالت تم مناسبتی)
+// ۲. مدیریت تم (روز/شب)
 // =========================================
 const savedTheme = localStorage.getItem('theme') || 'dark';
 const initialTheme = isSeasonThemeActive() ? 'dark' : savedTheme;
@@ -48,13 +74,11 @@ function initThemeToggle() {
     
     toggleBtns.forEach(btn => {
         if (seasonActive) {
-            // تم مناسبتی فعاله → دکمه روز/شب مخفی و غیرقابل استفاده میشه
             btn.style.display = 'none';
             return;
         }
         
-        // حالت عادی → دکمه فعال
-        btn.style.display = '';
+        btn.style.display = 'flex';
         btn.innerText = document.body.getAttribute('data-theme') === 'dark' ? '☀️' : '🌙';
         btn.addEventListener('click', () => {
             const newTheme = document.body.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
@@ -66,7 +90,7 @@ function initThemeToggle() {
 }
 
 // =========================================
-// ۳. دیتابیس اولیه
+// ۳. دیتابیس اولیه و توابع
 // =========================================
 if (!localStorage.getItem('bloxItems')) {
     const defaultItems = [
@@ -86,9 +110,6 @@ if (!localStorage.getItem('bloxCategories')) {
     localStorage.setItem('bloxCategories', JSON.stringify(defaultCategories));
 }
 
-// =========================================
-// ۴. توابع دیتابیس
-// =========================================
 function getItems() { return JSON.parse(localStorage.getItem('bloxItems')) || []; }
 function saveItems(items) { localStorage.setItem('bloxItems', JSON.stringify(items)); }
 function getServices() { return JSON.parse(localStorage.getItem('bloxServices')) || []; }
@@ -101,9 +122,121 @@ function getCurrentUser() { return JSON.parse(localStorage.getItem('bloxCurrentU
 function getOrders() { return JSON.parse(localStorage.getItem('bloxOrders')) || []; }
 function saveOrders(orders) { localStorage.setItem('bloxOrders', JSON.stringify(orders)); }
 
+// توابع اسلایدرهای داینامیک
+function getServiceSliders() {
+    let sliders = JSON.parse(localStorage.getItem('bloxServiceSliders'));
+    if (!sliders || !Array.isArray(sliders) || sliders.length === 0) {
+        sliders = [
+            { id: 'default-desc', title: 'خدمات تخصصی Blox Fruits', type: 'services' },
+            { id: 'default-shop', title: 'خرید خدمات (Level Up)', type: 'items', categoryId: 'Service' }
+        ];
+        localStorage.setItem('bloxServiceSliders', JSON.stringify(sliders));
+    }
+    return sliders;
+}
+function saveServiceSliders(sliders) { localStorage.setItem('bloxServiceSliders', JSON.stringify(sliders)); }
+
+function getHomeSliders() {
+    const stored = localStorage.getItem('bloxHomeSliders');
+    if (stored !== null) return JSON.parse(stored);
+    
+    let sliders = [];
+    getCategories().forEach(c => {
+        if (c.id.toLowerCase() !== 'service') sliders.push({ id: 'cat-' + c.id, title: c.name, categoryId: c.id });
+    });
+    return sliders;
+}
+function saveHomeSliders(sliders) { localStorage.setItem('bloxHomeSliders', JSON.stringify(sliders)); }
+
 // =========================================
-// ۵. هدر و منو
+// ۴. هدر و منو و جستجوی سراسری (اصلاح شد)
 // =========================================
+function injectGlobalSearch() {
+    const header = document.querySelector('header');
+    if (!header || document.getElementById('globalSearchInput')) return;
+
+    const searchHTML = `
+        <div class="header-search-box" id="headerSearchBox">
+            <button onclick="performGlobalSearch()"><i class="fas fa-search"></i></button>
+            <!-- فیلد قفل شده تا مرورگر پسورد پیست نکند -->
+            <input type="text" id="globalSearchInput" placeholder="جستجو..." autocomplete="off" readonly onfocus="this.removeAttribute('readonly')" onkeypress="if(event.key === 'Enter') performGlobalSearch()">
+            <div id="search-suggestions" class="search-suggestions"></div>
+        </div>
+    `;
+    
+    // قرار دادن سرچ باکس دقیقا بعد از لوگو (خارج از سایدبار)
+    const logo = header.querySelector('.logo');
+    if (logo) {
+        logo.insertAdjacentHTML('afterend', searchHTML);
+    } else {
+        header.insertAdjacentHTML('afterbegin', searchHTML);
+    }
+
+    const input = document.getElementById('globalSearchInput');
+    
+    input.addEventListener('input', (e) => {
+        const query = e.target.value.trim().toLowerCase();
+        const sugBox = document.getElementById('search-suggestions');
+        
+        if (query.length < 2) {
+            sugBox.style.display = 'none';
+            return;
+        }
+
+        const items = getItems();
+        const services = getServices();
+
+        const filteredItems = items.filter(i => i.name.toLowerCase().includes(query));
+        const filteredServices = services.filter(s => s.title.toLowerCase().includes(query));
+
+        if (filteredItems.length === 0 && filteredServices.length === 0) {
+            sugBox.innerHTML = '<div style="padding: 15px; text-align: center; color: var(--text-muted); font-size: 0.85rem;">نتیجه‌ای یافت نشد</div>';
+            sugBox.style.display = 'block';
+            return;
+        }
+
+        let html = '';
+        filteredItems.slice(0, 5).forEach(item => {
+            html += `
+                <div class="suggestion-item" onclick="window.location.href='items.html?search=${encodeURIComponent(item.name)}'">
+                    <img src="${item.img}" alt="${item.name}">
+                    <span class="sug-title">${item.name}</span>
+                    <span class="sug-type">آیتم</span>
+                </div>
+            `;
+        });
+
+        filteredServices.slice(0, 5).forEach(service => {
+            const iconHTML = service.img ? `<img src="${service.img}" alt="${service.title}">` : `<i class="${service.icon || 'fas fa-star'}"></i>`;
+            html += `
+                <div class="suggestion-item" onclick="window.location.href='services.html?search=${encodeURIComponent(service.title)}'">
+                    ${iconHTML}
+                    <span class="sug-title">${service.title}</span>
+                    <span class="sug-type">خدمت</span>
+                </div>
+            `;
+        });
+
+        sugBox.innerHTML = html;
+        sugBox.style.display = 'block';
+    });
+
+    document.addEventListener('click', (e) => {
+        const searchBox = document.getElementById('headerSearchBox');
+        if (searchBox && !searchBox.contains(e.target)) {
+            const sugBox = document.getElementById('search-suggestions');
+            if (sugBox) sugBox.style.display = 'none';
+        }
+    });
+}
+
+function performGlobalSearch() {
+    const input = document.getElementById('globalSearchInput');
+    if (input && input.value.trim() !== '') {
+        window.location.href = `items.html?search=${encodeURIComponent(input.value.trim())}`;
+    }
+}
+
 function updateAuthUI() {
     const authContainer = document.getElementById('auth-container');
     const navUl = document.querySelector('header nav ul');
@@ -117,19 +250,30 @@ function updateAuthUI() {
         <li><a href="index.html" class="${currentPath === 'index.html' ? 'active' : ''}">خانه</a></li>
         <li><a href="items.html" class="${currentPath === 'items.html' ? 'active' : ''}">آیتم‌ها</a></li>
         <li><a href="services.html" class="${currentPath === 'services.html' ? 'active' : ''}">خدمات</a></li>
+        <li><a href="contact.html" class="${currentPath === 'contact.html' ? 'active' : ''}">تماس</a></li>
     `;
 
     if (isAdmin) {
         menuHTML += `<li><a href="admin.html" style="color:var(--primary-orange); font-weight:bold;" class="${currentPath === 'admin.html' ? 'active' : ''}">پنل ادمین</a></li>`;
-        authContainer.innerHTML = `<span style="color:var(--primary-blue); font-weight:bold; margin-left: 10px;">ادمین</span> <button onclick="logoutAdmin()" class="btn-logout">خروج <i class="fas fa-sign-out-alt"></i></button>`;
+        authContainer.innerHTML = `
+            <div style="display:flex; align-items:center; gap:10px;">
+                <span style="color:var(--primary-blue); font-weight:bold; font-size: 0.9rem;">ادمین</span>
+                <button onclick="logoutAdmin()" class="btn-logout" style="padding: 6px 12px; font-size: 0.85rem;">خروج <i class="fas fa-sign-out-alt"></i></button>
+            </div>`;
     } else if (user) {
         menuHTML += `<li><a href="javascript:void(0)" onclick="openCustomerOrders()" style="color:#00cc66; font-weight:bold;">سفارش‌های قبلی</a></li>`;
-        authContainer.innerHTML = `<span style="color:var(--primary-blue); font-weight:bold; margin-left: 10px;">${user.username}</span> <button onclick="logout()" class="btn-logout">خروج <i class="fas fa-sign-out-alt"></i></button>`;
+        authContainer.innerHTML = `
+            <div style="display:flex; align-items:center; gap:10px;">
+                <span style="color:var(--primary-blue); font-weight:bold; font-size: 0.9rem;">${user.username}</span>
+                <button onclick="logout()" class="btn-logout" style="padding: 6px 12px; font-size: 0.85rem;">خروج <i class="fas fa-sign-out-alt"></i></button>
+            </div>`;
     } else {
-        authContainer.innerHTML = `<a href="login.html" class="btn">ورود / ثبت‌نام</a>`;
+        authContainer.innerHTML = `<a href="login.html" class="btn" style="padding: 8px 15px; font-size: 0.9rem;">ورود / ثبت‌نام</a>`;
     }
     
     navUl.innerHTML = menuHTML;
+    injectGlobalSearch(); 
+    updateFooterYear();
 }
 
 function logout() {
@@ -145,7 +289,7 @@ function logoutAdmin() {
 }
 
 // =========================================
-// ۶. سبد خرید
+// ۵. سبد خرید
 // =========================================
 function getCart() { return JSON.parse(localStorage.getItem('bloxCart')) || []; }
 function saveCart(cart) { localStorage.setItem('bloxCart', JSON.stringify(cart)); }
@@ -170,7 +314,6 @@ function removeFromCart(itemId) {
     renderCartItems();
 }
 
-// مودال موفقیت ثبت سفارش
 function injectTrackingModal() {
     if (document.getElementById('tracking-modal')) return;
     const modalHTML = `
@@ -178,9 +321,7 @@ function injectTrackingModal() {
             <div class="cart-modal-content" style="text-align: center; border-color: #00cc66; padding: 30px;">
                 <h2 style="color: #00cc66; margin-bottom: 20px;"><i class="fas fa-check-circle"></i> سفارش ثبت شد!</h2>
                 <p style="margin-bottom: 15px;">کد پیگیری شما:</p>
-                <div id="display-tracking-code" style="font-size: 2.5rem; font-weight: 900; color: var(--primary-blue); letter-spacing: 5px; background: rgba(0,0,0,0.3); padding: 15px; border-radius: 10px; margin-bottom: 20px; border: 2px dashed var(--primary-blue);">
-                    XXX
-                </div>
+                <div id="display-tracking-code" style="font-size: 2.5rem; font-weight: 900; color: var(--primary-blue); letter-spacing: 5px; background: rgba(0,0,0,0.3); padding: 15px; border-radius: 10px; margin-bottom: 20px; border: 2px dashed var(--primary-blue);">XXX</div>
                 <p style="color: var(--text-muted); font-size: 0.95rem; margin-bottom: 20px; line-height: 1.6;">لطفاً این کد را به آیدی روبیکا <strong style="color: var(--primary-orange);">@ahr51r1</strong> ارسال کنید.</p>
                 <button onclick="document.getElementById('tracking-modal').style.display='none'" class="btn btn-primary" style="width: 100%;">متوجه شدم</button>
             </div>
@@ -274,9 +415,6 @@ function renderCartItems() {
     totalPriceEl.innerText = totalPrice.toLocaleString() + ' تومان';
 }
 
-// =========================================
-// ۷. ثبت سفارش
-// =========================================
 function generateTrackingCode() {
     const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
     let code = '';
@@ -288,10 +426,7 @@ function checkout() {
     const cart = getCart();
     const user = getCurrentUser();
 
-    if (cart.length === 0) {
-        showToast('سبد خرید شما خالی است!', 'error');
-        return;
-    }
+    if (cart.length === 0) { showToast('سبد خرید شما خالی است!', 'error'); return; }
     if (!user) {
         showToast('برای ثبت سفارش ابتدا باید وارد حساب کاربری خود شوید!', 'error');
         setTimeout(() => window.location.href = 'login.html', 1500);
@@ -348,7 +483,7 @@ function checkout() {
 }
 
 // =========================================
-// ۸. سفارش‌های قبلی مشتری
+// ۶. سفارش‌های قبلی مشتری
 // =========================================
 function injectCustomerOrdersModal() {
     if (document.getElementById('customer-orders-modal')) return;
@@ -411,7 +546,7 @@ function openCustomerOrders() {
 }
 
 // =========================================
-// ۹. اجرای اولیه
+// ۷. اجرای اولیه
 // =========================================
 document.addEventListener('DOMContentLoaded', () => {
     initThemeToggle();
@@ -427,7 +562,6 @@ document.addEventListener('DOMContentLoaded', () => {
         injectTrackingModal();
     }
 
-    // بنر مناسبت‌ها
     const seasonTheme = localStorage.getItem('bloxSeasonTheme') || 'default';
     if (seasonTheme !== 'default') {
         document.body.classList.add(`theme-${seasonTheme}`);
@@ -453,6 +587,14 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 });
+
+function updateFooterYear() {
+    const stats = JSON.parse(localStorage.getItem('bloxStats')) || {};
+    const year = stats.year || '۱۴۰۴';
+    document.querySelectorAll('.footer-year-text').forEach(el => {
+        el.innerText = year;
+    });
+}
 
 function toggleMobileMenu() {
     const header = document.querySelector('header');

@@ -5,34 +5,26 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>آیتم‌ها | Blox Shop</title>
     
-    <!-- لینک آیکون‌ها (این خط جا افتاده بود) -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-        <link rel="shortcut icon" href="./images/logo.jpg" type="image/x-icon">
+    <link rel="shortcut icon" href="./images/logo.jpg" type="image/x-icon">
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/items.css">
 </head>
 <body>
-        <header>
+    <header>
         <div class="logo"><img src="images/logo.jpg" alt="Logo"></div>
         
-        <!-- دکمه منوی موبایل -->
         <button class="mobile-menu-btn" onclick="toggleMobileMenu()">
             <i class="fas fa-bars"></i>
         </button>
 
-        <!-- لایه تاریک پشت منو -->
         <div class="menu-overlay" onclick="toggleMobileMenu()"></div>
         
-        <!-- سایدبار (منوی کناری) -->
         <div class="sidebar-content">
             <button class="close-sidebar-btn" onclick="toggleMobileMenu()">
                 <i class="fas fa-times"></i>
             </button>
-
-            <nav>
-                <ul></ul> <!-- لینک‌ها توسط JS ساخته می‌شوند -->
-            </nav>
-            
+            <nav><ul></ul></nav>
             <div class="header-actions">
                 <button class="theme-toggle">☀️</button>
                 <div id="auth-container"></div>
@@ -40,14 +32,52 @@
         </div>
     </header>
 
-    <main class="container">
-        <h2 class="page-title">فروشگاه میوه‌ها</h2>
+    <main class="container" style="min-height: 70vh;">
+              <h2 class="page-title">فروشگاه میوه‌ها</h2>
         
-        <!-- فیلترها به صورت داینامیک ساخته می‌شوند -->
+        <!-- فقط مرتب‌سازی -->
+        <div class="search-sort-wrapper" style="justify-content: flex-end; margin-bottom: 20px;">
+            <div class="sort-box">
+                <select id="sortSelect">
+                    <option value="default">مرتب‌سازی: پیش‌فرض</option>
+                    <option value="price-low">ارزان‌ترین</option>
+                    <option value="price-high">گران‌ترین</option>
+                    <option value="name-az">الفبا (A تا Z)</option>
+                </select>
+            </div>
+        </div>
+        <!-- فیلترها -->
         <div class="filters" id="filters-container"></div>
 
+        <!-- شبکه محصولات -->
         <div class="grid" id="items-grid"></div>
+        
+        <!-- حالت خالی بودن -->
+        <div id="empty-state" style="display: none; text-align: center; padding: 50px 20px;">
+            <i class="fas fa-search-minus" style="font-size: 4rem; color: var(--text-muted); margin-bottom: 20px; opacity: 0.5;"></i>
+            <h3 style="color: var(--text-color); margin-bottom: 10px;">هیچ آیتمی یافت نشد!</h3>
+            <p style="color: var(--text-muted);">لطفاً عبارت دیگری را جستجو کنید یا فیلتر را تغییر دهید.</p>
+        </div>
     </main>
+
+    <!-- فوتر -->
+    <footer class="site-footer">
+        <div class="footer-content">
+            <div class="footer-logo">
+                <img src="images/logo.jpg" alt="Blox Shop">
+                <h3>Blox Shop</h3>
+                <p>مرجع تخصصی خرید آیتم‌های Blox Fruits</p>
+            </div>
+
+            <div class="made-by">
+                <i class="fas fa-code"></i>
+                Made with <i class="fas fa-heart heart"></i> by
+                <strong>Behdad Naderi</strong>
+            </div>
+
+       <p class="footer-copy">© <span class="footer-year-text">۱۴۰۴</span> Blox Shop - تمام حقوق محفوظ است</p>
+        </div>
+    </footer>
 
     <script src="js/app.js"></script>
     <script src="js/items.js"></script>

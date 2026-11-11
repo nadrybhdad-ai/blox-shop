@@ -20,6 +20,7 @@
     --cat-rare: #9933ff;
     --cat-uncommon: #00ccff;
     --cat-common: #999999;
+    --cat-service: #ffd700;
 }
 
 [data-theme="light"] {
@@ -44,55 +45,374 @@ body {
     color: var(--text-color);
     direction: rtl;
     min-height: 100vh;
+    overflow-x: hidden;
 }
 
-/* Header */
+/* =========================================
+   هدر و ناوبری (چینش جدید)
+========================================= */
 header {
     background: var(--card-bg);
-    padding: 15px 5%;
+    padding: 10px 5%;
     display: flex;
-    justify-content: space-between;
     align-items: center;
+    justify-content: space-between;
     border-bottom: 2px solid var(--primary-blue);
     position: sticky;
     top: 0;
     z-index: 100;
+    gap: 15px;
+    min-height: 80px;
+    flex-wrap: nowrap; /* جلوگیری از شکستن در دسکتاپ */
 }
 
-.logo img { height: 50px; border-radius: 50%; }
-nav ul { display: flex; list-style: none; gap: 20px; }
-nav ul li a { color: var(--text-color); text-decoration: none; font-weight: 700; }
-nav ul li a:hover, nav ul li a.active { color: var(--primary-orange); }
+.logo { 
+    flex: 0 0 auto; 
+}
 
-.header-actions { display: flex; align-items: center; gap: 15px; }
+.logo img { 
+    height: 50px; 
+    width: auto;
+    max-width: 100px;
+    object-fit: contain;
+    border-radius: 50%; 
+}
+
+nav ul { 
+    display: flex; 
+    list-style: none; 
+    gap: 20px; 
+    margin: 0;
+    padding: 0;
+}
+
+nav ul li a { 
+    color: var(--text-color); 
+    text-decoration: none; 
+    font-weight: 700; 
+    white-space: nowrap;
+}
+
+nav ul li a:hover, nav ul li a.active { 
+    color: var(--primary-orange); 
+}
+
+.header-actions { 
+    display: flex; 
+    align-items: center; 
+    gap: 15px; 
+}
+
+/* =========================================
+   کادر جستجو (هدر)
+========================================= */
+.header-search-box {
+    position: relative;
+    display: flex;
+    align-items: center;
+    background: var(--bg-color);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 5px 15px;
+    height: 44px;
+    transition: 0.3s;
+    cursor: pointer;
+}
+
+.header-search-box:focus-within {
+    border-color: var(--primary-blue);
+    box-shadow: 0 0 15px rgba(0, 210, 255, 0.3);
+    cursor: text;
+}
+
+/* جلوگیری از سفید شدن اینپوت در مرورگرها */
+.header-search-box input {
+    background: transparent !important;
+    border: none !important;
+    color: var(--text-color) !important;
+    font-family: 'Vazirmatn', sans-serif;
+    width: 100%;
+    outline: none !important;
+    padding: 8px 10px;
+    font-size: 0.95rem;
+    cursor: pointer;
+}
+
+.header-search-box input:focus {
+    cursor: text;
+}
+
+.header-search-box input::placeholder { 
+    color: var(--text-muted); 
+}
+
+.header-search-box button {
+    background: transparent;
+    border: none;
+    color: var(--primary-blue);
+    cursor: pointer;
+    padding: 5px;
+    font-size: 1.1rem;
+    transition: 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.header-search-box button:hover {
+    color: var(--primary-orange);
+    transform: scale(1.1);
+}
+
+/* منوی پیشنهادات جستجو */
+.search-suggestions {
+    position: absolute;
+    top: calc(100% + 10px);
+    right: 0;
+    width: 100%;
+    min-width: 320px;
+    background: var(--card-bg);
+    border: 2px solid var(--primary-blue);
+    border-radius: 12px;
+    max-height: 350px;
+    overflow-y: auto;
+    z-index: 9999;
+    display: none;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.6);
+}
+
+.suggestion-item {
+    padding: 12px 15px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+    border-bottom: 1px solid var(--border-color);
+    transition: 0.2s;
+}
+.suggestion-item:last-child { border-bottom: none; }
+.suggestion-item:hover { background: rgba(255,255,255,0.05); }
+.suggestion-item img {
+    width: 35px;
+    height: 35px;
+    object-fit: contain;
+    background: rgba(0,0,0,0.2);
+    border-radius: 5px;
+}
+.suggestion-item i {
+    width: 35px;
+    text-align: center;
+    font-size: 1.3rem;
+    color: var(--primary-blue);
+}
+.suggestion-item .sug-title {
+    font-weight: bold;
+    font-size: 0.95rem;
+    color: var(--text-color);
+}
+.suggestion-item .sug-type {
+    margin-right: auto;
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    background: rgba(0,0,0,0.3);
+    padding: 2px 8px;
+    border-radius: 10px;
+}
 
 /* دکمه تغییر تم */
 .theme-toggle {
     background: transparent;
     border: 1px solid var(--border-color);
     color: var(--text-color);
-    padding: 8px 12px;
+    padding: 8px;
     border-radius: 8px;
     cursor: pointer;
     font-size: 1.2rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 40px;
+    height: 40px;
 }
-.theme-toggle:hover { border-color: var(--primary-blue); }
+.theme-toggle:hover { 
+    border-color: var(--primary-blue); 
+}
 
-.btn {
-    background: linear-gradient(45deg, var(--primary-blue), #0077ff);
-    color: #fff;
-    padding: 8px 20px;
+/* =========================================
+   دکمه های موبایل و مودال
+========================================= */
+.mobile-menu-btn {
+    display: none;
+    background: transparent;
+    border: none;
+    color: var(--text-color);
+    font-size: 1.8rem;
+    cursor: pointer;
+    z-index: 1001;
+}
+
+.menu-overlay {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(4px);
+    z-index: 999;
+}
+
+.close-sidebar-btn {
+    display: none;
+    background: transparent;
+    border: none;
+    color: var(--danger);
+    font-size: 1.5rem;
+    cursor: pointer;
+    align-self: flex-end;
+    margin-bottom: 20px;
+}
+
+.btn-logout {
+    background: linear-gradient(45deg, #ff3333, #cc0000) !important;
+    color: white;
+    padding: 8px 15px;
     border-radius: 8px;
-    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    font-family: inherit;
     font-weight: bold;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 4px 15px rgba(255, 51, 51, 0.3);
+    transition: 0.3s;
+    text-decoration: none;
+}
+.btn-logout:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(255, 51, 51, 0.6);
 }
 
-/* دسته بندی رنگ‌ها */
-.text-mythical { color: var(--cat-mythical); }
-.text-legendary { color: var(--cat-legendary); }
-.text-rare { color: var(--cat-rare); }
-.text-uncommon { color: var(--cat-uncommon); }
-.text-common { color: var(--cat-common); }
+/* =========================================
+   تنظیمات دسکتاپ (چینش دقیق هدر)
+========================================= */
+@media (min-width: 769px) {
+    .sidebar-content {
+        display: contents; /* المان ها آزادانه در هدر چیده می شوند */
+    }
+
+    /* ۱. لوگو سمت راست */
+    .logo { order: 1; }
+
+    /* ۲. تب ها (منو) */
+    nav { 
+        order: 2; 
+        flex: 0 0 auto; 
+    }
+
+    /* ۳. سرچ باکس بعد از تب ها */
+    .header-search-box { 
+        order: 3; 
+        flex: 1; /* پر کردن فضای خالی */
+        max-width: 350px;
+        margin-left: 10px;
+    }
+
+    /* ۴. دکمه های ورود/خروج و تم در سمت چپ */
+    .header-actions { 
+        order: 4; 
+        flex: 0 0 auto;
+        margin-right: auto; /* هُل دادن این بخش به سمت چپ‌ترین نقطه */
+    }
+
+    .close-sidebar-btn, .menu-overlay, .mobile-menu-btn {
+        display: none !important;
+    }
+}
+
+/* =========================================
+   تنظیمات موبایل (سرچ در هدر + سایدبار)
+========================================= */
+@media (max-width: 768px) {
+    header {
+        padding: 10px 15px;
+        gap: 10px;
+    }
+
+    .logo { order: 1; }
+    .logo img { height: 40px; }
+
+    /* سرچ باکس در موبایل دقیقا وسط هدر می ماند */
+    .header-search-box {
+        order: 2;
+        flex: 1; /* گرفتن تمام فضای خالی بین لوگو و دکمه منو */
+        display: flex !important;
+        max-width: none;
+        margin: 0;
+    }
+    .search-suggestions { min-width: 100%; }
+
+    /* دکمه همبرگری سمت چپ */
+    .mobile-menu-btn { 
+        order: 3;
+        display: block; 
+    }
+
+    /* تنظیمات سایدبار (منو از چپ باز میشود) */
+    .sidebar-content {
+        position: fixed;
+        top: 0;
+        left: -320px; 
+        width: 300px;
+        height: 100vh;
+        background: var(--card-bg);
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: stretch;
+        padding: 20px;
+        transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        z-index: 1000;
+        border-right: 2px solid var(--primary-blue);
+        box-shadow: 10px 0 30px rgba(0, 0, 0, 0.5);
+        overflow-y: auto;
+    }
+
+    header.active-mobile-menu .sidebar-content { left: 0; }
+    header.active-mobile-menu .menu-overlay { display: block; }
+
+    .close-sidebar-btn { display: block; }
+
+    nav { width: 100%; margin-bottom: 30px; margin-right: 0; }
+    nav ul { flex-direction: column; gap: 15px; width: 100%; }
+    nav ul li { width: 100%; border-bottom: 1px solid rgba(255, 255, 255, 0.05); }
+    nav ul li a { display: block; padding: 12px 10px; font-size: 1.1rem; text-align: right; }
+
+    .header-actions {
+        width: 100%;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 15px;
+        margin-top: auto; 
+        padding-top: 20px;
+        border-top: 1px dashed var(--border-color);
+    }
+
+    .theme-toggle { align-self: flex-end; margin-bottom: 10px; }
+    #auth-container { display: flex; flex-direction: column; align-items: center; background: rgba(0, 0, 0, 0.2); padding: 15px; border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.05); }
+    #auth-container span { font-size: 1rem; margin-bottom: 15px; }
+    #auth-container .btn-logout { width: 100%; justify-content: center; padding: 12px; font-size: 1rem; }
+}
+
+/* =========================================
+   مخفی کردن سبد خرید هنگام باز شدن منو
+========================================= */
+header.active-mobile-menu ~ #cart-floating-btn {
+    opacity: 0;
+    visibility: hidden;
+    transform: scale(0);
+    transition: 0.3s ease;
+    pointer-events: none;
+}
+
 /* =========================================
    استایل سبد خرید (شناور و مودال)
 ========================================= */
@@ -114,10 +434,7 @@ nav ul li a:hover, nav ul li a.active { color: var(--primary-orange); }
     z-index: 999;
     transition: 0.3s;
 }
-
-#cart-floating-btn:hover {
-    transform: scale(1.1);
-}
+#cart-floating-btn:hover { transform: scale(1.1); }
 
 .cart-badge {
     position: absolute;
@@ -136,7 +453,6 @@ nav ul li a:hover, nav ul li a.active { color: var(--primary-orange); }
     border: 2px solid var(--bg-color);
 }
 
-/* مودال (پنجره) سبد خرید */
 .cart-modal {
     display: none;
     position: fixed;
@@ -174,7 +490,6 @@ nav ul li a:hover, nav ul li a.active { color: var(--primary-orange); }
     padding: 15px 20px;
     border-bottom: 1px solid var(--border-color);
 }
-
 .cart-header h3 { color: var(--primary-orange); margin: 0; }
 
 .close-btn {
@@ -239,399 +554,23 @@ nav ul li a:hover, nav ul li a.active { color: var(--primary-orange); }
     font-size: 1.1rem;
 }
 .cart-total strong { color: var(--primary-blue); }
-:root {
-    --cat-service: #ffd700; /* رنگ طلایی برای خدمات */
-}
+
+.btn { white-space: nowrap; }
 .text-service { color: var(--cat-service); }
-/* جلوگیری از شکستن متن دکمه ورود */
-.btn {
-    white-space: nowrap;
-}
 
-/* دکمه منوی موبایل (در کامپیوتر مخفی است) */
-.mobile-menu-btn {
-    display: none;
-    background: transparent;
-    border: none;
-    color: var(--text-color);
-    font-size: 1.8rem;
-    cursor: pointer;
-}
-
-/* =========================================
-   تنظیمات ریسپانسیو برای هدر (موبایل و تبلت)
-========================================= */
-/* =========================================
-   دکمه منوی موبایل و لایه تاریک
-========================================= */
-.mobile-menu-btn {
-    display: none; /* در کامپیوتر مخفی است */
-    background: transparent;
-    border: none;
-    color: var(--text-color);
-    font-size: 1.8rem;
-    cursor: pointer;
-    z-index: 1001; /* بالاتر از سایدبار */
-}
-
-.menu-overlay {
-    display: none;
-    position: fixed;
-    top: 0; left: 0; width: 100%; height: 100%;
-    background: rgba(0, 0, 0, 0.7);
-    backdrop-filter: blur(4px);
-    z-index: 999;
-}
-
-.close-sidebar-btn {
-    display: none;
-    background: transparent;
-    border: none;
-    color: var(--danger);
-    font-size: 1.5rem;
-    cursor: pointer;
-    align-self: flex-start; /* قرارگیری در گوشه */
-    margin-bottom: 20px;
-}
-
-.sidebar-content {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex: 1;
-}
-
-/* =========================================
-   تنظیمات ریسپانسیو برای موبایل (منوی کناری)
-========================================= */
-/* =========================================
-   استایل دکمه خروج (در دسکتاپ و موبایل)
-========================================= */
-.btn-logout {
-    background: linear-gradient(45deg, #ff3333, #cc0000) !important;
-    color: white;
-    padding: 8px 15px;
-    border-radius: 8px;
-    border: none;
-    cursor: pointer;
-    font-family: inherit;
-    font-weight: bold;
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    box-shadow: 0 4px 15px rgba(255, 51, 51, 0.3);
-    transition: 0.3s;
-    text-decoration: none;
-}
-
-.btn-logout:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(255, 51, 51, 0.6);
-}
-
-/* =========================================
-   دکمه منوی موبایل و لایه تاریک
-========================================= */
-.mobile-menu-btn {
-    display: none; /* در کامپیوتر مخفی است */
-    background: transparent;
-    border: none;
-    color: var(--text-color);
-    font-size: 1.8rem;
-    cursor: pointer;
-    z-index: 1001;
-}
-
-.menu-overlay {
-    display: none;
-    position: fixed;
-    top: 0; left: 0; width: 100%; height: 100%;
-    background: rgba(0, 0, 0, 0.7);
-    backdrop-filter: blur(4px);
-    z-index: 999;
-}
-
-.close-sidebar-btn {
-    display: none;
-    background: transparent;
-    border: none;
-    color: var(--danger);
-    font-size: 1.5rem;
-    cursor: pointer;
-    align-self: flex-end;
-    margin-bottom: 20px;
-}
-
-.sidebar-content {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex: 1;
-}
-
-/* =========================================
-   تنظیمات ریسپانسیو برای موبایل (منوی کناری از چپ)
-========================================= */
-@media (max-width: 768px) {
-    header {
-        padding: 15px;
-        flex-wrap: nowrap; 
-    }
-
-    .logo img {
-        height: 40px;
-    }
-
-    .mobile-menu-btn {
-        display: block; 
-    }
-
-    /* تبدیل محتوا به سایدبار */
-    .sidebar-content {
-        position: fixed;
-        top: 0;
-        left: -300px; /* تغییر: شروع از سمت چپ */
-        width: 280px;
-        height: 100vh;
-        background: var(--card-bg);
-        flex-direction: column;
-        justify-content: flex-start;
-        align-items: stretch;
-        padding: 20px;
-        transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1); /* تغییر: انیمیشن از چپ */
-        z-index: 1000;
-        border-right: 2px solid var(--primary-blue); /* تغییر: خط سمت راست سایدبار */
-        box-shadow: 10px 0 30px rgba(0, 0, 0, 0.5); /* تغییر: سایه به سمت راست */
-        overflow-y: auto;
-    }
-
-    /* وقتی منو باز می‌شود */
-    header.active-mobile-menu .sidebar-content {
-        left: 0; /* تغییر: باز شدن از سمت چپ */
-    }
-
-    header.active-mobile-menu .menu-overlay {
-        display: block;
-    }
-
-    .close-sidebar-btn {
-        display: block; 
-    }
-
-    /* استایل لینک‌های منو در موبایل */
-    nav {
-        width: 100%;
-        margin-bottom: 30px;
-    }
-
-    nav ul {
-        flex-direction: column;
-        gap: 15px;
-        width: 100%;
-    }
-
-    nav ul li {
-        width: 100%;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-    }
-
-    nav ul li a {
-        display: block;
-        padding: 12px 10px;
-        font-size: 1.1rem;
-        text-align: right;
-    }
-
-    /* استایل بخش ادمین و خروج در موبایل */
-    .header-actions {
-        width: 100%;
-        flex-direction: column;
-        align-items: stretch;
-        gap: 15px;
-        margin-top: auto; 
-        padding-top: 20px;
-        border-top: 1px dashed var(--border-color);
-    }
-
-    .theme-toggle {
-        align-self: flex-end; 
-        margin-bottom: 10px;
-    }
-
-    #auth-container {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        background: rgba(0, 0, 0, 0.2);
-        padding: 15px;
-        border-radius: 12px;
-        border: 1px solid rgba(255, 255, 255, 0.05);
-    }
-
-    #auth-container span {
-        font-size: 1rem;
-        margin-bottom: 15px;
-    }
-
-    #auth-container .btn-logout {
-        width: 100%;
-        justify-content: center;
-        padding: 12px;
-        font-size: 1rem;
-    }
-}
-/* =========================================
-   اصلاح چیدمان هدر در دسکتاپ
-========================================= */
-@media (min-width: 769px) {
-    header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-    }
-
-    .sidebar-content {
-        display: contents; /* اجازه میده منو و دکمه‌ها مستقیماً داخل هدر قرار بگیرن */
-    }
-
-    nav {
-        margin-right: 30px;
-        margin-left: auto; /* هل دادن دکمه‌های ورود و تم به سمت چپ */
-    }
-
-    nav ul {
-        display: flex;
-        gap: 20px;
-        align-items: center;
-    }
-
-    .header-actions {
-        display: flex;
-        align-items: center;
-        gap: 15px;
-    }
-
-    .close-sidebar-btn, .menu-overlay {
-        display: none !important; /* مخفی کردن دکمه‌های موبایل در دسکتاپ */
-    }
-}
-/* =========================================
-   مخفی کردن سبد خرید هنگام باز شدن منو
-========================================= */
-header.active-mobile-menu ~ #cart-floating-btn {
-    opacity: 0;
-    visibility: hidden;
-    transform: scale(0); /* افکت کوچک شدن برای زیبایی */
-    transition: 0.3s ease;
-    pointer-events: none; /* جلوگیری از کلیک روی آن در حالت مخفی */
-}
 /* =========================================
    تم‌های مناسبت‌ها (Event Themes)
    ========================================= */
-
-/* ۱. تم هالووین (نارنجی، بنفش، تیره) */
-body.theme-halloween {
-    --bg-color: #150d1c;
-    --card-bg: #22142b;
-    --primary-blue: #ff7b00; /* نارنجی */
-    --primary-orange: #a855f7; /* بنفش */
-    --border-color: #3d2352;
-}
-.banner-halloween {
-    background: linear-gradient(90deg, #ff7b00, #a855f7);
-    color: #fff;
-    text-shadow: 0 0 10px rgba(0,0,0,0.5);
-}
-
-/* ۲. تم ولنتاین (صورتی، قرمز، تیره) */
-body.theme-valentine {
-    --bg-color: #1c0a12;
-    --card-bg: #2e111d;
-    --primary-blue: #ff3366; /* قرمز-صورتی */
-    --primary-orange: #ff99cc; /* صورتی روشن */
-    --border-color: #4d1c30;
-}
-.banner-valentine {
-    background: linear-gradient(90deg, #ff3366, #ff99cc);
-    color: #fff;
-}
-
-/* ۳. تم کریسمس (قرمز، سبز، تیره) */
-body.theme-christmas {
-    --bg-color: #0a1a12;
-    --card-bg: #112b1e;
-    --primary-blue: #e74c3c; /* قرمز */
-    --primary-orange: #2ecc71; /* سبز */
-    --border-color: #1e4a34;
-}
-.banner-christmas {
-    background: linear-gradient(90deg, #e74c3c, #2ecc71);
-    color: #fff;
-}
-
-/* ۴. تم نوروز (سبز، طلایی، فیروزه‌ای) */
-body.theme-nowruz {
-    --bg-color: #0a1a1a;
-    --card-bg: #112b2a;
-    --primary-blue: #00d2ff; /* فیروزه‌ای */
-    --primary-orange: #2ecc71; /* سبز عیدانه */
-    --border-color: #1e4a48;
-}
-.banner-nowruz {
-    background: linear-gradient(90deg, #2ecc71, #00d2ff);
-    color: #fff;
-}
-
-/* استایل مشترک بنرها */
-.season-banner {
-    width: 100%;
-    text-align: center;
-    padding: 12px;
-    font-weight: bold;
-    font-size: 1.1rem;
-    font-family: inherit;
-    z-index: 9999;
-    position: relative;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-    animation: slideDownBanner 0.5s ease;
-}
-
-@keyframes slideDownBanner {
-    from { transform: translateY(-100%); opacity: 0; }
-    to { transform: translateY(0); opacity: 1; }
-}
-/* =========================================
-   استایل مودال سفارش‌های مشتری
-========================================= */
-#customer-orders-modal .cart-modal-content {
-    border-color: #00cc66;
-}
-
-#customer-orders-modal .cart-header h3 {
-    color: #00cc66;
-}
-
-/* =========================================
-   استایل‌های مربوط به تم مناسبت‌ها (کدهای قبلی)
-========================================= */
-body.theme-halloween {
-    --bg-color: #150d1c; --card-bg: #22142b; --primary-blue: #ff7b00; --primary-orange: #a855f7; --border-color: #3d2352;
-}
+body.theme-halloween { --bg-color: #150d1c; --card-bg: #22142b; --primary-blue: #ff7b00; --primary-orange: #a855f7; --border-color: #3d2352; }
 .banner-halloween { background: linear-gradient(90deg, #ff7b00, #a855f7); color: #fff; text-shadow: 0 0 10px rgba(0,0,0,0.5); }
 
-body.theme-valentine {
-    --bg-color: #1c0a12; --card-bg: #2e111d; --primary-blue: #ff3366; --primary-orange: #ff99cc; --border-color: #4d1c30;
-}
+body.theme-valentine { --bg-color: #1c0a12; --card-bg: #2e111d; --primary-blue: #ff3366; --primary-orange: #ff99cc; --border-color: #4d1c30; }
 .banner-valentine { background: linear-gradient(90deg, #ff3366, #ff99cc); color: #fff; }
 
-body.theme-christmas {
-    --bg-color: #0a1a12; --card-bg: #112b1e; --primary-blue: #e74c3c; --primary-orange: #2ecc71; --border-color: #1e4a34;
-}
+body.theme-christmas { --bg-color: #0a1a12; --card-bg: #112b1e; --primary-blue: #e74c3c; --primary-orange: #2ecc71; --border-color: #1e4a34; }
 .banner-christmas { background: linear-gradient(90deg, #e74c3c, #2ecc71); color: #fff; }
 
-body.theme-nowruz {
-    --bg-color: #0a1a1a; --card-bg: #112b2a; --primary-blue: #00d2ff; --primary-orange: #2ecc71; --border-color: #1e4a48;
-}
+body.theme-nowruz { --bg-color: #0a1a1a; --card-bg: #112b2a; --primary-blue: #00d2ff; --primary-orange: #2ecc71; --border-color: #1e4a48; }
 .banner-nowruz { background: linear-gradient(90deg, #2ecc71, #00d2ff); color: #fff; }
 
 .season-banner {
@@ -643,6 +582,13 @@ body.theme-nowruz {
     from { transform: translateY(-100%); opacity: 0; }
     to { transform: translateY(0); opacity: 1; }
 }
+
+.custom-normal-banner {
+    width: 100%; text-align: center; padding: 12px; font-weight: bold; font-size: 1.1rem; font-family: inherit;
+    z-index: 9999; position: relative; background: linear-gradient(90deg, var(--primary-blue), #0077ff); color: #fff;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3); animation: slideDownBanner 0.5s ease;
+}
+
 /* =========================================
    سیستم نوتیفیکیشن زیبا (Toast)
 ========================================= */
@@ -682,21 +628,84 @@ body.theme-nowruz {
 .toast-success { border-left-color: #00cc66; }
 .toast-error { border-left-color: var(--danger); }
 .toast-info { border-left-color: var(--primary-orange); }
-
 /* =========================================
-   بنر عادی سفارشی (تم پیش‌فرض)
+   انیمیشن صفحه لودینگ (Preloader)
 ========================================= */
-.custom-normal-banner {
+#page-loader {
+    position: fixed;
+    top: 0;
+    left: 0;
     width: 100%;
-    text-align: center;
-    padding: 12px;
-    font-weight: bold;
-    font-size: 1.1rem;
-    font-family: inherit;
-    z-index: 9999;
+    height: 100%;
+    background-color: var(--bg-color);
+    z-index: 999999;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    transition: opacity 0.5s ease, visibility 0.5s ease;
+}
+
+#page-loader.hidden {
+    opacity: 0;
+    visibility: hidden;
+}
+
+.loader-spinner {
+    width: 70px;
+    height: 70px;
     position: relative;
-    background: linear-gradient(90deg, var(--primary-blue), #0077ff);
-    color: #fff;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-    animation: slideDownBanner 0.5s ease;
+    margin-bottom: 20px;
+}
+
+.loader-spinner::before,
+.loader-spinner::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    border: 3px solid transparent;
+}
+
+.loader-spinner::before {
+    border-top-color: var(--primary-blue);
+    border-bottom-color: var(--primary-blue);
+    animation: spin 1.5s linear infinite;
+}
+
+.loader-spinner::after {
+    border-left-color: var(--primary-orange);
+    border-right-color: var(--primary-orange);
+    animation: spin-reverse 1.5s linear infinite;
+}
+
+.loader-logo {
+    font-size: 1.8rem;
+    font-weight: 900;
+    color: var(--text-color);
+    letter-spacing: 2px;
+    animation: pulse 1.5s ease-in-out infinite;
+}
+
+.loader-logo span {
+    color: var(--primary-blue);
+    text-shadow: 0 0 15px var(--primary-blue);
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+@keyframes spin-reverse {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(-360deg); }
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.6; transform: scale(0.95); }
 }

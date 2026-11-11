@@ -5,25 +5,105 @@
 .page-title {
     text-align: center;
     font-size: 2.5rem;
-    margin-bottom: 40px;
+    margin-bottom: 30px;
     color: var(--primary-orange);
     text-shadow: 0 0 20px rgba(255, 140, 0, 0.4);
 }
 
 /* =========================================
+   نوار جستجو و مرتب‌سازی (جدید)
+========================================= */
+.search-sort-wrapper {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 25px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.search-box {
+    position: relative;
+    flex: 1;
+    max-width: 400px;
+}
+
+.search-box i {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-muted);
+}
+
+.search-box input {
+    width: 100%;
+    padding: 12px 40px 12px 15px;
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    color: var(--text-color);
+    font-family: inherit;
+    font-size: 1rem;
+    transition: 0.3s;
+}
+
+.search-box input:focus {
+    outline: none;
+    border-color: var(--primary-blue);
+    box-shadow: 0 0 15px rgba(0, 210, 255, 0.2);
+}
+
+.sort-box select {
+    padding: 12px 15px;
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    color: var(--text-color);
+    font-family: inherit;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: 0.3s;
+    height: 100%;
+}
+
+.sort-box select:focus {
+    outline: none;
+    border-color: var(--primary-blue);
+}
+
+/* =========================================
    استایل فیلترها
+========================================= */
+/* =========================================
+   استایل فیلترها (اصلاح شده به صورت اسلایدر)
 ========================================= */
 .filters {
     display: flex;
-    justify-content: center;
     gap: 12px;
-    margin-bottom: 50px;
-    flex-wrap: wrap;
-    padding: 20px;
+    margin: 0 auto 40px auto; /* وسط چین */
+    padding: 15px 20px;
     background: rgba(19, 28, 49, 0.4);
     border-radius: 20px;
     border: 1px solid rgba(255, 255, 255, 0.05);
     backdrop-filter: blur(10px);
+    
+    /* تنظیمات اسلایدر */
+    width: max-content; /* عرض به اندازه محتوا */
+    max-width: 100%; /* اما بیشتر از صفحه نشود */
+    overflow-x: auto; /* فعال کردن اسکرول افقی */
+    flex-wrap: nowrap; /* در یک خط بمانند */
+    
+    /* مخفی کردن نوار اسکرول برای ظاهر تمیزتر */
+    scrollbar-width: none; /* فایرفاکس */
+    -ms-overflow-style: none; /* اینترنت اکسپلورر */
+    -webkit-overflow-scrolling: touch; /* اسکرول نرم در موبایل */
+    
+    cursor: grab; /* نشانگر موس به شکل دست */
+    user-select: none; /* جلوگیری از انتخاب شدن متن هنگام درگ کردن */
+}
+
+.filters::-webkit-scrollbar {
+    display: none; /* مخفی کردن نوار اسکرول در کروم و سافاری */
 }
 
 .filter-btn {
@@ -38,11 +118,12 @@
     font-size: 1rem;
     transition: all 0.3s ease;
     position: relative;
-    overflow: hidden;
     display: flex;
     align-items: center;
     justify-content: center;
     box-shadow: inset 0 0 10px rgba(0,0,0,0.2);
+    white-space: nowrap;
+    flex-shrink: 0; /* جلوگیری از فشرده شدن دکمه‌ها */
 }
 
 .filter-btn:hover {
@@ -61,11 +142,6 @@
                 inset 0 0 10px rgba(255,255,255,0.5);
     transform: scale(1.05);
 }
-
-.filter-btn.active[data-filter="Common"] {
-    color: #fff;
-}
-
 /* =========================================
    استایل کارت‌های محصول
 ========================================= */
@@ -96,7 +172,6 @@
     box-shadow: 0 15px 30px rgba(0, 210, 255, 0.15);
 }
 
-/* بخش برچسب‌ها (گوشه بالا راست) */
 .product-badges {
     position: absolute;
     top: 15px;
@@ -107,7 +182,6 @@
     z-index: 10;
 }
 
-/* اصلاح سایز برچسب‌ها */
 .badge {
     padding: 4px 10px;
     border-radius: 6px;
@@ -116,13 +190,10 @@
     color: #fff;
     text-align: center;
     box-shadow: 0 2px 5px rgba(0,0,0,0.3);
-    
-    /* این دو خط باعث می‌شوند همه برچسب‌ها دقیقاً یک اندازه باشند */
     min-width: 80px; 
     display: inline-block;
 }
 
-/* عکس محصول (وسط چین و با فاصله از بالا) */
 .product-card img {
     width: 120px;
     height: 120px;
@@ -130,8 +201,6 @@
     margin: 35px auto 15px auto; 
     display: block; 
     transition: 0.3s;
-    
-    /* این کدها باعث می‌شوند اگر عکس لود نشد، متن جایگزین زشت روی کارت نیفتد */
     color: transparent; 
     font-size: 0; 
     overflow: hidden;
@@ -141,7 +210,6 @@
     transform: scale(1.1);
 }
 
-/* بخش نام و قیمت */
 .product-info {
     text-align: center;
     width: 100%;
@@ -164,7 +232,6 @@
     margin-bottom: 20px;
 }
 
-/* دکمه خرید (ته کارت) */
 .btn-buy {
     width: 100%;
     background: transparent;
@@ -183,4 +250,131 @@
     background: var(--primary-blue);
     color: var(--bg-color);
     box-shadow: 0 0 15px rgba(0, 210, 255, 0.5);
+}
+
+/* =========================================
+   ریسپانسیو فیلترها و جستجو
+========================================= */
+@media (max-width: 768px) {
+    .search-sort-wrapper {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .search-box, .sort-box select {
+        max-width: 100%;
+        width: 100%;
+    }
+
+    .filters {
+        flex-wrap: nowrap;
+        justify-content: flex-start;
+        overflow-x: auto;
+        padding: 15px;
+        gap: 10px;
+        border-radius: 15px;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+        -webkit-overflow-scrolling: touch;
+        scroll-snap-type: x mandatory;
+    }
+
+    .filters::-webkit-scrollbar {
+        display: none;
+    }
+
+    .filter-btn {
+        flex-shrink: 0;
+        padding: 8px 18px;
+        font-size: 0.9rem;
+        scroll-snap-align: start;
+    }
+}
+
+/* =========================================
+   فوتر
+========================================= */
+.site-footer {
+    background: var(--card-bg);
+    border-top: 2px solid var(--primary-blue);
+    padding: 50px 5% 30px;
+    margin-top: 60px;
+    position: relative;
+}
+
+.footer-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 25px;
+}
+
+.footer-logo img {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    border: 2px solid var(--primary-blue);
+    box-shadow: 0 0 20px rgba(0, 210, 255, 0.4);
+    margin-bottom: 10px;
+}
+
+.footer-logo h3 {
+    color: var(--primary-blue);
+    font-size: 1.5rem;
+    margin-bottom: 5px;
+    text-shadow: 0 0 10px rgba(0, 210, 255, 0.4);
+}
+
+.footer-logo p {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+}
+
+.made-by {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 28px;
+    background: linear-gradient(45deg, rgba(0, 210, 255, 0.1), rgba(255, 140, 0, 0.1));
+    border: 1px solid var(--border-color);
+    border-radius: 30px;
+    font-size: 0.95rem;
+    color: var(--text-muted);
+    position: relative;
+    transition: 0.3s;
+    direction: ltr;
+    font-family: 'Vazirmatn', sans-serif;
+}
+
+.made-by:hover {
+    border-color: var(--primary-orange);
+    box-shadow: 0 0 25px rgba(255, 140, 0, 0.3);
+    transform: translateY(-3px);
+}
+
+.made-by .heart {
+    color: var(--danger);
+    animation: heartPulse 1.5s infinite;
+}
+
+.made-by strong {
+    color: var(--primary-orange);
+    font-weight: 900;
+    letter-spacing: 0.5px;
+    text-shadow: 0 0 10px rgba(255, 140, 0, 0.3);
+}
+
+@keyframes heartPulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.25); }
+}
+
+.footer-copy {
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    padding-top: 20px;
+    border-top: 1px solid var(--border-color);
+    width: 100%;
 }
