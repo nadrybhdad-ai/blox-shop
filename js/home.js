@@ -37,8 +37,8 @@ function renderHomeSliders() {
                 : `<span style="color:#00cc66; font-size:0.85rem;">(موجود)</span>`;
 
             const btnHTML = isOutOfStock 
-                ? `<button disabled style="margin-top:10px; background:transparent; border:1px solid var(--text-muted); color:var(--text-muted); padding:5px 10px; border-radius:5px; cursor:not-allowed;">افزودن به سبد</button>`
-                : `<button onclick="addToCart(${item.id})" style="margin-top:10px; background:transparent; border:1px solid var(--primary-blue); color:var(--primary-blue); padding:5px 10px; border-radius:5px; cursor:pointer; transition:0.3s;">افزودن به سبد</button>`;
+                ? `<button disabled class="btn-add-cart out-of-stock">افزودن به سبد</button>`
+                : `<button onclick="addToCart(${item.id})" class="btn-add-cart">افزودن به سبد</button>`;
 
             wrapper.innerHTML += `
                 <div class="swiper-slide" style="${isOutOfStock ? 'opacity: 0.8;' : ''}">
@@ -68,7 +68,6 @@ function renderHomeServicesBanner() {
     if (serviceDescs.length > 0) {
         let html = '';
         
-        // ساخت کارت‌های خدمات
         serviceDescs.slice(0, 4).forEach(service => {
             html += `
                 <div class="service-mini-card">
@@ -79,7 +78,6 @@ function renderHomeServicesBanner() {
             `;
         });
         
-        // قرار دادن دکمه در یک ردیف جداگانه در پایین
         if (viewAllBtn) {
             html += `
                 <div style="width: 100%; display: flex; justify-content: center; margin-top: 15px;">
@@ -91,6 +89,7 @@ function renderHomeServicesBanner() {
         banner.innerHTML = html;
     }
 }
+
 // ۳. نمایش آمار
 document.addEventListener('DOMContentLoaded', () => {
     const stats = JSON.parse(localStorage.getItem('bloxStats'));

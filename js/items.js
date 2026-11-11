@@ -25,12 +25,10 @@ document.addEventListener('DOMContentLoaded', () => {
     // تابع کمکی برای تبدیل قیمت (رشته) به عدد واقعی برای مرتب‌سازی
     function parsePriceToNumber(priceStr) {
         if (!priceStr) return 0;
-        // تبدیل اعداد فارسی به انگلیسی
         const persianNumbers = [/۰/g, /۱/g, /۲/g, /۳/g, /۴/g, /۵/g, /۶/g, /۷/g, /۸/g, /۹/g];
         for (let i = 0; i < 10; i++) {
             priceStr = priceStr.toString().replace(persianNumbers[i], i);
         }
-        // حذف هر کاراکتری که عدد نیست (مثل کاما، تومان، فاصله و...)
         const numericString = priceStr.replace(/[^\d]/g, '');
         return parseInt(numericString) || 0;
     }
@@ -41,7 +39,8 @@ document.addEventListener('DOMContentLoaded', () => {
         let html = `<button class="filter-btn active" data-filter="all" style="--cat-color: var(--primary-orange);">همه</button>`;
         
         categories.forEach(cat => {
-            if(cat.id.toLowerCase() === 'service') return;
+            // 👇 اینجا دقیقا چک میکنیم که فقط دسته بندی های نوع آیتم نمایش داده بشن
+            if(cat.type !== 'item') return;
             html += `
                 <button class="filter-btn" data-filter="${cat.id}" style="--cat-color: ${cat.color};">${cat.name}</button>
             `;
@@ -51,7 +50,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
         document.querySelectorAll('.filter-btn').forEach(btn => {
             btn.addEventListener('click', (e) => {
-                // جلوگیری از کلیک ناخواسته وقتی کاربر در حال کشیدن (Drag) اسلایدر است
                 if (filtersContainer.dataset.dragging === 'true') {
                     return;
                 }
@@ -60,7 +58,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 e.target.classList.add('active');
                 currentFilter = e.target.dataset.filter;
                 
-                // اگر روی فیلتر کلیک شد، جستجو پاک شود تا فیلترها به درستی کار کنند
                 if (currentSearch !== '') {
                     currentSearch = '';
                     if(headerSearchInput) headerSearchInput.value = '';
@@ -77,11 +74,14 @@ document.addEventListener('DOMContentLoaded', () => {
         let filtered = [];
 
         if (currentSearch.trim() !== '') {
-            // حالت جستجو: هم آیتم‌ها و هم خدمات را فیلتر میکنیم
             filtered = allItems.filter(i => i.name.toLowerCase().includes(currentSearch.toLowerCase().trim()));
         } else {
-            // حالت عادی: فقط آیتم‌های فروشگاه (خدمات نمایش داده نمیشوند)
-            filtered = allItems.filter(i => i.category.toLowerCase() !== 'service');
+            // 👇 اینجا هم دقیقا چک میکنیم آیتم هایی که دسته بندی شون از نوع item هست نمایش داده بشن
+            filtered = allItems.filter(i => {
+                const cat = categories.find(c => c.id === i.category);
+                return cat && cat.type === 'item';
+            });
+            
             if (currentFilter !== 'all') {
                 filtered = filtered.filter(i => i.category === currentFilter);
             }
@@ -96,7 +96,6 @@ document.addEventListener('DOMContentLoaded', () => {
             filtered.sort((a, b) => a.name.localeCompare(b.name));
         }
 
-        // نمایش
         renderItemsHTML(filtered);
     }
 
@@ -166,7 +165,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (filtersContainer) {
         filtersContainer.addEventListener('mousedown', (e) => {
             isDown = true;
-            filtersContainer.dataset.dragging = 'false'; // ریست کردن حالت درگ
+            filtersContainer.dataset.dragging = 'false';
             filtersContainer.style.cursor = 'grabbing';
             startX = e.pageX - filtersContainer.offsetLeft;
             scrollLeft = filtersContainer.scrollLeft;
@@ -180,7 +179,6 @@ document.addEventListener('DOMContentLoaded', () => {
         filtersContainer.addEventListener('mouseup', () => {
             isDown = false;
             filtersContainer.style.cursor = 'grab';
-            // اگر واقعا درگ شده بود، بعد از کلیک، متغیر رو ریست میکنیم
             setTimeout(() => { filtersContainer.dataset.dragging = 'false'; }, 50);
         });
 
@@ -190,7 +188,6 @@ document.addEventListener('DOMContentLoaded', () => {
             const x = e.pageX - filtersContainer.offsetLeft;
             const walk = (x - startX) * 2; 
             
-            // اگر بیش از 5 پیکسل حرکت کرد، یعنی کاربر داره میکشه (نه کلیک)
             if (Math.abs(walk) > 5) {
                 filtersContainer.dataset.dragging = 'true';
             }

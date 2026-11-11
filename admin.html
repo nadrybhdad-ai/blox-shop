@@ -33,12 +33,11 @@
         <div class="admin-dashboard">
             <!-- ستون راست -->
             <div class="admin-column">
-                               <!-- تنظیمات آمار -->
+                <!-- تنظیمات آمار -->
                 <div class="admin-card" style="border-top-color: var(--primary-orange);">
                     <h3><i class="fas fa-chart-line" style="color:var(--primary-orange);"></i> تنظیمات آمار و فوتر</h3>
                     <input type="text" id="set-orders" placeholder="تعداد خرید موفق (مثلا +۳,۰۰۰)">
                     <input type="text" id="set-rating" placeholder="امتیاز رضایت (مثلا ۵ / ۵)">
-                    <!-- 👇 فیلد جدید برای سال 👇 -->
                     <input type="text" id="set-year" placeholder="سال کپی‌رایت (مثلا ۱۴۰۴)">
                     <button onclick="saveStats()" class="btn" style="background:var(--primary-orange); width:100%;">ذخیره تنظیمات</button>
                 </div>
@@ -56,15 +55,26 @@
                     <button onclick="saveSeasonTheme()" class="btn" style="background:#9b59b6; width:100%; margin-top:10px;">اعمال تم مناسبت</button>
                 </div>
 
-                <!-- مدیریت دسته‌بندی‌ها -->
+                <!-- مدیریت دسته‌بندی آیتم ها -->
                 <div class="admin-card" style="border-top-color: var(--primary-blue);">
-                    <h3><i class="fas fa-layer-group" style="color:var(--primary-blue);"></i> مدیریت دسته‌بندی‌ها</h3>
+                    <h3><i class="fas fa-layer-group" style="color:var(--primary-blue);"></i> مدیریت دسته‌بندی آیتم‌ها</h3>
                     <div style="display:flex; gap:10px;">
-                        <input type="text" id="newCatName" placeholder="نام انگلیسی (مثلا Swords)" style="margin:0;">
-                        <input type="color" id="newCatColor" value="#ff3333" style="width:60px; margin:0; padding:5px;">
+                        <input type="text" id="newItemCatName" placeholder="نام انگلیسی (مثلا Swords)" style="margin:0;">
+                        <input type="color" id="newItemCatColor" value="#ff3333" style="width:60px; margin:0; padding:5px;">
                     </div>
-                    <button onclick="addCategory()" class="btn" style="background:var(--primary-blue); width:100%; margin-top:10px;">افزودن دسته‌بندی</button>
-                    <div id="admin-categories-list" style="max-height: 200px; overflow-y: auto; margin-top:15px;"></div>
+                    <button onclick="addCategory('item')" class="btn" style="background:var(--primary-blue); width:100%; margin-top:10px;">افزودن دسته‌بندی آیتم</button>
+                    <div id="admin-item-categories-list" style="max-height: 200px; overflow-y: auto; margin-top:15px;"></div>
+                </div>
+
+                <!-- مدیریت دسته‌بندی خدمات -->
+                <div class="admin-card" style="border-top-color: #ffd700; margin-top: 20px;">
+                    <h3><i class="fas fa-concierge-bell" style="color:#ffd700;"></i> مدیریت دسته‌بندی خدمات</h3>
+                    <div style="display:flex; gap:10px;">
+                        <input type="text" id="newServiceCatName" placeholder="نام انگلیسی (مثلا Mastery)" style="margin:0;">
+                        <input type="color" id="newServiceCatColor" value="#ffd700" style="width:60px; margin:0; padding:5px;">
+                    </div>
+                    <button onclick="addCategory('service')" class="btn" style="background:#ffd700; color:#000; width:100%; margin-top:10px;">افزودن دسته‌بندی خدمت</button>
+                    <div id="admin-service-categories-list" style="max-height: 200px; overflow-y: auto; margin-top:15px;"></div>
                 </div>
 
                 <!-- مدیریت اسلایدرهای صفحه خدمات -->
@@ -83,7 +93,7 @@
                     <div id="admin-service-sliders-list" style="display:flex; flex-direction:column; gap:10px; max-height:300px; overflow-y:auto;"></div>
                 </div>
 
-                <!-- مدیریت اسلایدرهای صفحه خانه (جدید) -->
+                <!-- مدیریت اسلایدرهای صفحه خانه -->
                 <div class="admin-card" style="border-top-color: var(--primary-orange); margin-top: 20px;">
                     <h3><i class="fas fa-home" style="color:var(--primary-orange);"></i> مدیریت اسلایدرهای صفحه خانه</h3>
                     

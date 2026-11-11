@@ -11,9 +11,12 @@ let adminSwipers = [];
 // =========================================
 // ۱. مدیریت دسته‌بندی‌ها
 // =========================================
-function addCategory() {
-    const name = document.getElementById('newCatName').value.trim();
-    const color = document.getElementById('newCatColor').value;
+function addCategory(type) {
+    const nameInput = type === 'item' ? document.getElementById('newItemCatName') : document.getElementById('newServiceCatName');
+    const colorInput = type === 'item' ? document.getElementById('newItemCatColor') : document.getElementById('newServiceCatColor');
+    const name = nameInput.value.trim();
+    const color = colorInput.value;
+    
     if (!name) { showToast('نام دسته‌بندی الزامی است!', 'error'); return; }
     
     const id = name.replace(/\s+/g, '-').toLowerCase(); 
@@ -23,20 +26,20 @@ function addCategory() {
         return;
     }
 
-    categories.push({ id, name, color });
+    categories.push({ id, name, color, type });
     saveCategories(categories);
-    document.getElementById('newCatName').value = '';
+    nameInput.value = '';
     updateCategoryDropdown();
     renderAdminCategories();
     renderAdminSliders();
     updateServiceSliderCategoryDropdown();
-    updateHomeSliderCategoryDropdown(); // آپدیت منوی خانه
+    updateHomeSliderCategoryDropdown();
     showToast('دسته‌بندی جدید اضافه شد!', 'success');
 }
 
 function deleteCategory(id) {
     if (id.toLowerCase() === 'service') {
-        showToast('دسته‌بندی خدمات قابل حذف نیست!', 'error');
+        showToast('دسته‌بندی خدمات پیش‌فرض قابل حذف نیست!', 'error');
         return;
     }
     if (confirm(`حذف دسته‌بندی "${id}"؟`)) {
@@ -45,7 +48,7 @@ function deleteCategory(id) {
         renderAdminCategories();
         renderAdminSliders();
         updateServiceSliderCategoryDropdown();
-        updateHomeSliderCategoryDropdown(); // آپدیت منوی خانه
+        updateHomeSliderCategoryDropdown();
     }
 }
 
@@ -60,13 +63,20 @@ function moveCategory(id, direction) {
 }
 
 function renderAdminCategories() {
-    const list = document.getElementById('admin-categories-list');
-    if (!list) return;
-    list.innerHTML = '';
-    getCategories().forEach((cat, index) => {
+    const itemList = document.getElementById('admin-item-categories-list');
+    const serviceList = document.getElementById('admin-service-categories-list');
+    if (!itemList || !serviceList) return;
+    
+    itemList.innerHTML = '';
+    serviceList.innerHTML = '';
+    
+    const cats = getCategories();
+    
+    cats.forEach((cat, index) => {
         const upStyle = index === 0 ? 'opacity: 0.3; pointer-events: none;' : '';
-        const downStyle = index === getCategories().length - 1 ? 'opacity: 0.3; pointer-events: none;' : '';
-        list.innerHTML += `
+        const downStyle = index === cats.length - 1 ? 'opacity: 0.3; pointer-events: none;' : '';
+        
+        const html = `
             <div class="admin-item-row" style="padding: 8px; display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--border-color);">
                 <div><strong style="color:${cat.color};">${cat.name}</strong></div>
                 <div style="display:flex; gap:5px;">
@@ -75,6 +85,12 @@ function renderAdminCategories() {
                     <button onclick="deleteCategory('${cat.id}')" style="background:var(--danger); color:#fff; border:none; padding:5px; border-radius:5px;"><i class="fas fa-trash"></i></button>
                 </div>
             </div>`;
+            
+        if (cat.type === 'service') {
+            serviceList.innerHTML += html;
+        } else {
+            itemList.innerHTML += html;
+        }
     });
 }
 
@@ -82,7 +98,7 @@ function updateCategoryDropdown() {
     const select = document.getElementById('itemCategory');
     if (!select) return;
     select.innerHTML = '';
-    getCategories().forEach(cat => select.innerHTML += `<option value="${cat.id}">${cat.name}</option>`);
+    getCategories().filter(c => c.type === 'item').forEach(cat => select.innerHTML += `<option value="${cat.id}">${cat.name}</option>`);
 }
 
 // =========================================
@@ -92,7 +108,7 @@ function updateServiceSliderCategoryDropdown() {
     const select = document.getElementById('newSliderCategory');
     if (!select) return;
     select.innerHTML = '';
-    getCategories().forEach(cat => select.innerHTML += `<option value="${cat.id}">${cat.name}</option>`);
+    getCategories().filter(c => c.type === 'service').forEach(cat => select.innerHTML += `<option value="${cat.id}">${cat.name}</option>`);
 }
 
 document.getElementById('newSliderType')?.addEventListener('change', function(e) {
@@ -160,17 +176,13 @@ function moveServiceSlider(id, direction) {
 }
 
 // =========================================
-// ۱.۶. مدیریت اسلایدرهای صفحه خانه (جدید)
+// ۱.۶. مدیریت اسلایدرهای صفحه خانه
 // =========================================
 function updateHomeSliderCategoryDropdown() {
     const select = document.getElementById('newHomeSliderCategory');
     if (!select) return;
     select.innerHTML = '';
-    getCategories().forEach(cat => {
-        if (cat.id.toLowerCase() !== 'service') {
-            select.innerHTML += `<option value="${cat.id}">${cat.name}</option>`;
-        }
-    });
+    getCategories().filter(c => c.type === 'item').forEach(cat => select.innerHTML += `<option value="${cat.id}">${cat.name}</option>`);
 }
 
 function renderAdminHomeSliders() {
@@ -248,7 +260,7 @@ function loadStats() {
 function saveStats() {
     const orders = document.getElementById('set-orders').value;
     const rating = document.getElementById('set-rating').value;
-    const year = document.getElementById('set-year').value.trim() || '۱۴۰۴'; // اگر خالی بود، ۱۴۰۴ بذار
+    const year = document.getElementById('set-year').value.trim() || '۱۴۰۴';
     
     localStorage.setItem('bloxStats', JSON.stringify({ orders, rating, year }));
     showToast('تنظیمات با موفقیت ذخیره شد!', 'success');
@@ -453,9 +465,7 @@ function renderAdminSliders() {
     if(!container) return;
     container.innerHTML = ''; 
 
-    getCategories().forEach(category => {
-        if (category.id.toLowerCase() === 'service') return; // در این بخش خدمات را نشان نمی‌دهیم
-
+    getCategories().filter(c => c.type === 'item').forEach(category => {
         container.insertAdjacentHTML('beforeend', `
             <div class="slider-section" id="section-${category.id}">
                 <h3 style="color: ${category.color};">${category.name}</h3>

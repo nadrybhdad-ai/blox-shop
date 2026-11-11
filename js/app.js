@@ -3,31 +3,28 @@
 // =========================================
 // ۰. تزریق صفحه لودینگ (Preloader)
 // =========================================
-(function injectLoader() {
-    if (document.getElementById('page-loader')) return;
-    const loaderHTML = `
-        <div id="page-loader">
-            <div class="loader-spinner"></div>
-            <div class="loader-logo">Blox <span>Shop</span></div>
-        </div>
-    `;
-    document.body.insertAdjacentHTML('afterbegin', loaderHTML);
-})();
+document.addEventListener('DOMContentLoaded', () => {
+    if (!document.getElementById('page-loader')) {
+        const loaderHTML = `
+            <div id="page-loader">
+                <div class="loader-spinner"></div>
+                <div class="loader-logo">Blox <span>Shop</span></div>
+            </div>
+        `;
+        document.body.insertAdjacentHTML('afterbegin', loaderHTML);
+    }
 
-// پنهان کردن لودینگ بعد از لود کامل سایت (با تاخیر ۱ ثانیه‌ای)
-window.addEventListener('load', () => {
     setTimeout(() => {
         const loader = document.getElementById('page-loader');
         if (loader) {
-            loader.classList.add('hidden');
-            // حذف از DOM بعد از پایان انیمیشن محو شدن (نیم ثانیه بعد)
+            loader.classList.add('hidden'); 
             setTimeout(() => loader.remove(), 600);
         }
-    }, 1000); // 👈 این عدد ۱۰۰۰ یعنی ۱ ثانیه (۱۰۰۰ میلی‌ثانیه) صبر کن
+    }, 1000); 
 });
 
 // =========================================
-// ۰. بررسی فعال بودن تم مناسبتی
+// ۰.۵ بررسی فعال بودن تم مناسبتی
 // =========================================
 function isSeasonThemeActive() {
     const seasonTheme = localStorage.getItem('bloxSeasonTheme') || 'default';
@@ -101,13 +98,25 @@ if (!localStorage.getItem('bloxItems')) {
     ];
     localStorage.setItem('bloxItems', JSON.stringify(defaultItems));
 }
+
 if (!localStorage.getItem('bloxCategories')) {
     const defaultCategories = [
-        { id: 'Mythical', name: 'Mythical', color: '#ff3333' },
-        { id: 'Legendary', name: 'Legendary', color: '#ff66cc' },
-        { id: 'Service', name: 'Level Up (خدمات)', color: '#ffd700' }
+        { id: 'Mythical', name: 'Mythical', color: '#ff3333', type: 'item' },
+        { id: 'Legendary', name: 'Legendary', color: '#ff66cc', type: 'item' },
+        { id: 'Service', name: 'Level Up (خدمات)', color: '#ffd700', type: 'service' }
     ];
     localStorage.setItem('bloxCategories', JSON.stringify(defaultCategories));
+} else {
+    // آپدیت خودکار دیتابیس‌های قدیمی (اضافه کردن نوع به دسته‌بندی‌ها)
+    let cats = JSON.parse(localStorage.getItem('bloxCategories')) || [];
+    let updated = false;
+    cats.forEach(c => {
+        if (!c.type) {
+            c.type = (c.id.toLowerCase() === 'service') ? 'service' : 'item';
+            updated = true;
+        }
+    });
+    if (updated) localStorage.setItem('bloxCategories', JSON.stringify(cats));
 }
 
 function getItems() { return JSON.parse(localStorage.getItem('bloxItems')) || []; }
@@ -142,14 +151,14 @@ function getHomeSliders() {
     
     let sliders = [];
     getCategories().forEach(c => {
-        if (c.id.toLowerCase() !== 'service') sliders.push({ id: 'cat-' + c.id, title: c.name, categoryId: c.id });
+        if (c.type === 'item') sliders.push({ id: 'cat-' + c.id, title: c.name, categoryId: c.id });
     });
     return sliders;
 }
 function saveHomeSliders(sliders) { localStorage.setItem('bloxHomeSliders', JSON.stringify(sliders)); }
 
 // =========================================
-// ۴. هدر و منو و جستجوی سراسری (اصلاح شد)
+// ۴. هدر و منو و جستجوی سراسری
 // =========================================
 function injectGlobalSearch() {
     const header = document.querySelector('header');
@@ -158,13 +167,11 @@ function injectGlobalSearch() {
     const searchHTML = `
         <div class="header-search-box" id="headerSearchBox">
             <button onclick="performGlobalSearch()"><i class="fas fa-search"></i></button>
-            <!-- فیلد قفل شده تا مرورگر پسورد پیست نکند -->
             <input type="text" id="globalSearchInput" placeholder="جستجو..." autocomplete="off" readonly onfocus="this.removeAttribute('readonly')" onkeypress="if(event.key === 'Enter') performGlobalSearch()">
             <div id="search-suggestions" class="search-suggestions"></div>
         </div>
     `;
     
-    // قرار دادن سرچ باکس دقیقا بعد از لوگو (خارج از سایدبار)
     const logo = header.querySelector('.logo');
     if (logo) {
         logo.insertAdjacentHTML('afterend', searchHTML);
@@ -546,11 +553,83 @@ function openCustomerOrders() {
 }
 
 // =========================================
-// ۷. اجرای اولیه
+// ۷. نوار پیشرفت اسکرول
+// =========================================
+function injectScrollProgress() {
+    if (document.getElementById('scroll-progress-bar')) return;
+
+    const progressBar = document.createElement('div');
+    progressBar.id = 'scroll-progress-bar';
+    document.body.appendChild(progressBar);
+
+    window.addEventListener('scroll', () => {
+        const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+        const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+        
+        if (height > 0) {
+            const scrolled = (winScroll / height) * 100;
+            progressBar.style.width = scrolled + '%';
+        } else {
+            progressBar.style.width = '0%';
+        }
+    });
+}
+
+// =========================================
+// ۸. افکت سه‌بعدی (3D Tilt)
+// =========================================
+function initTiltEffects() {
+    const tiltElements = document.querySelectorAll(`
+        .product-card, 
+        .swiper-slide, 
+        .feature-card, 
+        .service-mini-card, 
+        .contact-card, 
+        .service-card
+    `);
+    
+    if (window.matchMedia("(pointer: coarse)").matches) return;
+
+    tiltElements.forEach(el => {
+        el.addEventListener('mousemove', handleTilt);
+        el.addEventListener('mouseleave', resetTilt);
+    });
+}
+
+function handleTilt(e) {
+    const el = e.currentTarget;
+    const rect = el.getBoundingClientRect();
+    
+    const x = e.clientX - rect.left; 
+    const y = e.clientY - rect.top;  
+
+    const centerX = rect.width / 2;
+    const centerY = rect.height / 2;
+
+    const rotateX = ((y - centerY) / centerY) * -3; 
+    const rotateY = ((x - centerX) / centerX) * 3;
+
+    el.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.01, 1.01, 1.01)`;
+    el.style.transition = 'transform 0.1s ease-out, box-shadow 0.3s ease';
+    el.style.zIndex = '10'; 
+    el.style.boxShadow = '0 15px 30px rgba(0, 210, 255, 0.2)'; 
+}
+
+function resetTilt(e) {
+    const el = e.currentTarget;
+    el.style.transform = `perspective(1000px) rotateX(0) rotateY(0) scale3d(1, 1, 1)`;
+    el.style.transition = 'transform 0.5s ease, box-shadow 0.5s ease';
+    el.style.zIndex = ''; 
+    el.style.boxShadow = ''; 
+}
+
+// =========================================
+// ۹. اجرای اولیه
 // =========================================
 document.addEventListener('DOMContentLoaded', () => {
     initThemeToggle();
     updateAuthUI();
+    injectScrollProgress();
 
     const currentPage = window.location.pathname.split('/').pop() || 'index.html';
     const isAuthPage = currentPage === 'login.html';
@@ -560,6 +639,8 @@ document.addEventListener('DOMContentLoaded', () => {
         updateCartUI();
         injectCustomerOrdersModal();
         injectTrackingModal();
+        
+        setTimeout(initTiltEffects, 500);
     }
 
     const seasonTheme = localStorage.getItem('bloxSeasonTheme') || 'default';
