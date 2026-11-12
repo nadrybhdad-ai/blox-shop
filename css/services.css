@@ -45,181 +45,90 @@
 }
 
 /* =========================================
-   استایل اسلایدر توضیحات خدمات (رفع بریدگی)
+   استایل اسلایدر توضیحات خدمات
 ========================================= */
-#services-desc-slider {
-    width: 100%;
-    padding-top: 25px !important; /* فاصله لازم برای افکت هاور (حرکت به بالا) */
-    margin-top: -25px; /* جبران فاصله برای اینکه چیدمان صفحه به هم نریزد */
-}
-
-/* باعث می‌شود تمام کارت‌ها هم‌قد بلندترین کارت شوند */
-#services-desc-slider .swiper-wrapper {
-    align-items: stretch; 
-}
-
-#services-desc-slider .swiper-slide {
-    width: 300px;
-    height: auto; 
-    display: flex; 
-}
-
-#services-desc-slider .service-card {
+.service-card {
     background: var(--card-bg);
     border: 1px solid var(--border-color);
     border-radius: 15px;
-    padding: 25px;
+    padding: 30px 25px;
     text-align: center;
-    transition: 0.3s;
+    transition: all 0.3s ease;
     position: relative;
     overflow: hidden;
     width: 100%;
-    height: 100%; 
+    height: 100%;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    box-sizing: border-box;
 }
 
-#services-desc-slider .service-card:hover {
+.service-card:hover {
     border-color: var(--primary-blue);
-    transform: translateY(-8px); /* حرکت به بالا */
-    box-shadow: 0 10px 25px rgba(0, 210, 255, 0.15);
+    transform: translateY(-8px);
+    box-shadow: 0 15px 30px rgba(0, 210, 255, 0.15);
 }
 
-#services-desc-slider .service-card i {
-    font-size: 2.5rem;
+/* استایل آیکون‌ها (بزرگ و درخشان) */
+.service-card i {
+    font-size: 3.5rem; /* سایز بزرگ */
+    color: var(--primary-orange);
+    margin-bottom: 20px;
+    text-shadow: 0 0 20px rgba(255, 140, 0, 0.4);
+    flex-shrink: 0;
+    transition: 0.3s;
+}
+
+.service-card:hover i {
+    transform: scale(1.1) translateY(-5px);
     color: var(--primary-blue);
-    margin-bottom: 15px;
-    text-shadow: 0 0 10px rgba(0, 210, 255, 0.5);
+    text-shadow: 0 0 25px rgba(0, 210, 255, 0.6);
+}
+
+/* استایل عکس‌ها (بزرگ و با قاب نئونی) */
+.service-card-img {
+    width: 100px; /* سایز بزرگ‌تر */
+    height: 100px;
+    object-fit: contain;
+    margin-bottom: 20px;
+    border-radius: 15px;
+    background: rgba(0, 0, 0, 0.3);
+    padding: 10px;
+    border: 2px solid var(--primary-blue);
+    box-shadow: 0 0 20px rgba(0, 210, 255, 0.3);
+    transition: 0.3s;
     flex-shrink: 0;
 }
 
-#services-desc-slider .service-card h3 {
-    font-size: 1.3rem;
+.service-card:hover .service-card-img {
+    transform: scale(1.1) translateY(-5px);
+    box-shadow: 0 0 30px rgba(0, 210, 255, 0.6);
+}
+
+.service-card h3 {
+    font-size: 1.4rem;
     margin-bottom: 10px;
     color: var(--primary-orange);
 }
 
-#services-desc-slider .service-card p {
+.service-card p {
     color: var(--text-muted);
     font-size: 0.95rem;
-    line-height: 1.6;
+    line-height: 1.8;
     margin: 0;
 }
 
-/* استایل عکس کارت‌های خدمات */
-.service-card-img {
-    width: 80px;
-    height: 80px;
-    object-fit: contain;
-    margin-bottom: 15px;
-    border-radius: 12px;
-    background: rgba(0, 0, 0, 0.2);
-    padding: 5px;
-    border: 1px solid var(--primary-blue);
-    box-shadow: 0 0 15px rgba(0, 210, 255, 0.3);
-    transition: 0.3s;
-    flex-shrink: 0;
-}
-
-#services-desc-slider .service-card:hover .service-card-img {
-    transform: scale(1.1) translateY(-5px);
-    box-shadow: 0 0 25px rgba(0, 210, 255, 0.6);
-}
-
-/* دکمه‌های اسلایدر توضیحات */
-#services-desc-slider .swiper-button-next, 
-#services-desc-slider .swiper-button-prev {
+/* دکمه‌های اسلایدر */
+.swiper-button-next, 
+.swiper-button-prev {
     color: var(--primary-blue) !important;
     transform: scale(0.7);
 }
 
 /* =========================================
-   استایل اسلایدر خرید خدمات (رفع بریدگی)
-========================================= */
-#services-slider {
-    width: 100%;
-    padding-top: 25px !important; /* فاصله لازم برای افکت هاور */
-    margin-top: -25px;
-}
-
-#services-slider .swiper-slide {
-    width: 260px; 
-    max-width: 100%;
-    background: var(--card-bg);
-    border: 1px solid var(--border-color);
-    border-radius: 15px;
-    padding: 20px;
-    text-align: center;
-    position: relative;
-    transition: 0.3s;
-}
-
-#services-slider .swiper-slide:hover {
-    transform: translateY(-8px);
-    border-color: var(--primary-blue);
-    box-shadow: 0 10px 20px rgba(0, 210, 255, 0.2);
-}
-
-#services-slider .swiper-slide img {
-    width: 120px;
-    height: 120px;
-    object-fit: contain;
-    margin-bottom: 15px;
-}
-
-#services-slider .swiper-slide h3 {
-    margin-bottom: 10px;
-    font-size: 1.2rem;
-    color: var(--cat-service);
-}
-
-#services-slider .price {
-    color: var(--primary-blue);
-    font-weight: bold;
-    font-size: 1.1rem;
-    margin-bottom: 15px;
-}
-
-#services-slider .btn-buy {
-    width: 100%;
-    background: transparent;
-    border: 2px solid var(--primary-blue);
-    color: var(--primary-blue);
-    padding: 10px;
-    border-radius: 8px;
-    cursor: pointer;
-    font-weight: bold;
-    transition: 0.3s;
-}
-
-#services-slider .btn-buy:hover {
-    background: var(--primary-blue);
-    color: var(--bg-color);
-}
-
-#services-slider .swiper-button-next, 
-#services-slider .swiper-button-prev {
-    color: var(--primary-blue) !important;
-    transform: scale(0.7);
-}
-
-/* استایل برچسب‌ها */
-.badge {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    background: var(--primary-blue);
-    color: #000;
-    padding: 4px 10px;
-    border-radius: 5px;
-    font-size: 0.8rem;
-    font-weight: bold;
-    z-index: 2;
-}
-/* =========================================
-   فوتر (مشابه صفحه تماس)
+   فوتر
 ========================================= */
 .site-footer {
     background: var(--card-bg);

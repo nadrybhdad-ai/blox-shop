@@ -89,34 +89,70 @@ function initThemeToggle() {
 // =========================================
 // ۳. دیتابیس اولیه و توابع
 // =========================================
-if (!localStorage.getItem('bloxItems')) {
-    const defaultItems = [
-        { id: 1, name: 'Dragon', price: '250,000', category: 'Mythical', img: 'https://via.placeholder.com/150/ff3333/ffffff?text=Dragon', status: true },
-        { id: 2, name: 'Leopard', price: '350,000', category: 'Mythical', img: 'https://via.placeholder.com/150/ff3333/ffffff?text=Leopard', status: true },
-        { id: 3, name: 'Dough', price: '150,000', category: 'Legendary', img: 'https://via.placeholder.com/150/ff66cc/ffffff?text=Dough', status: true },
-        { id: 11, name: 'Level Up 1000', price: '150,000', category: 'Service', img: 'https://via.placeholder.com/150/ffd700/000000?text=Lvl+1000', status: true }
+// =========================================
+// دیتابیس اولیه خدمات (توضیحات)
+// =========================================
+let servicesData = JSON.parse(localStorage.getItem('bloxServices'));
+
+if (!servicesData || !Array.isArray(servicesData) || servicesData.length === 0) {
+    // اگر سایت تازه باز شده، این کارت‌های پیش‌فرض ساخته می‌شوند
+    servicesData = [
+        { id: 1, title: 'لول اپ (Level Up)', desc: 'رسیدن به لول دلخواه (مثلا از لول ۱ تا ۲۵۰۰) با سرعت بالا و بدون ریسک بن.', icon: 'fas fa-arrow-up' },
+        { id: 2, title: 'مستری آپ (Mastery)', desc: 'فارم و بالا بردن مستری میوه‌ها، شمشیرها، گان‌ها و استایل‌های مبارزه تا لول ۶۰۰.', icon: 'fas fa-hand-rock' },
+        { id: 3, title: 'کشتن باس (Boss)', desc: 'کشتن باس‌های مختلف برای دراپ کردن آیتم‌های کمیاب و افسانه‌ای.', icon: 'fas fa-skull' },
+        { id: 4, title: 'گان (Gun)', desc: 'کمک به شما برای گرفتن گان‌های نایاب و قدرتمند در بازی.', icon: 'fas fa-gun' },
+        { id: 5, title: 'نژاد (Race)', desc: 'ری‌رول و آنلاک کردن نژادهای V2 و V4 با تمام قابلیت‌های ویژه.', icon: 'fas fa-hourglass-half' },
+        { id: 6, title: 'گرفتن سورد (Sword)', desc: 'کمک به شما برای بدست آوردن سوردهای افسانه‌ای، میتیک و نایاب بازی.', icon: 'fas fa-khanda' } // 👈 کارت جدید
     ];
-    localStorage.setItem('bloxItems', JSON.stringify(defaultItems));
+    localStorage.setItem('bloxServices', JSON.stringify(servicesData));
+} else {
+    // اگر از قبل کارت‌ها وجود داشتند (مثل عکس شما)، این کد چک می‌کند که آیا "گرفتن سورد" هست یا نه
+    if (!servicesData.find(s => s.title.includes('سورد'))) {
+        servicesData.push({ 
+            id: Date.now(), 
+            title: 'گرفتن سورد (Sword)', 
+            desc: 'کمک به شما برای بدست آوردن سوردهای افسانه‌ای، میتیک و نایاب بازی.', 
+            icon: 'fas fa-khanda' 
+        });
+        localStorage.setItem('bloxServices', JSON.stringify(servicesData));
+    }
 }
 
-if (!localStorage.getItem('bloxCategories')) {
-    const defaultCategories = [
+// =========================================
+// مدیریت دیتابیس دسته‌بندی‌ها (اضافه شدن گرفتن سورد)
+// =========================================
+let categoriesData = JSON.parse(localStorage.getItem('bloxCategories'));
+
+if (!categoriesData || !Array.isArray(categoriesData) || categoriesData.length === 0) {
+    // اگر دیتابیس خالی بود، پیش‌فرض‌ها را بساز
+    categoriesData = [
         { id: 'Mythical', name: 'Mythical', color: '#ff3333', type: 'item' },
         { id: 'Legendary', name: 'Legendary', color: '#ff66cc', type: 'item' },
-        { id: 'Service', name: 'Level Up (خدمات)', color: '#ffd700', type: 'service' }
+        { id: 'Service', name: 'Level Up (خدمات)', color: '#ffd700', type: 'service' },
+        { id: 'Sword', name: 'گرفتن سورد', color: '#00d2ff', type: 'service' } // 👈 دسته جدید
     ];
-    localStorage.setItem('bloxCategories', JSON.stringify(defaultCategories));
+    localStorage.setItem('bloxCategories', JSON.stringify(categoriesData));
 } else {
-    // آپدیت خودکار دیتابیس‌های قدیمی (اضافه کردن نوع به دسته‌بندی‌ها)
-    let cats = JSON.parse(localStorage.getItem('bloxCategories')) || [];
+    // آپدیت خودکار دیتابیس‌های قدیمی
     let updated = false;
-    cats.forEach(c => {
+    
+    // ۱. اضافه کردن نوع (type) به دسته‌بندی‌هایی که ندارند
+    categoriesData.forEach(c => {
         if (!c.type) {
             c.type = (c.id.toLowerCase() === 'service') ? 'service' : 'item';
             updated = true;
         }
     });
-    if (updated) localStorage.setItem('bloxCategories', JSON.stringify(cats));
+
+    // ۲. چک کردن وجود "گرفتن سورد"، اگر نبود اضافه شود
+    if (!categoriesData.find(c => c.id.toLowerCase() === 'sword')) {
+        categoriesData.push({ id: 'Sword', name: 'گرفتن سورد', color: '#00d2ff', type: 'service' });
+        updated = true;
+    }
+
+    if (updated) {
+        localStorage.setItem('bloxCategories', JSON.stringify(categoriesData));
+    }
 }
 
 function getItems() { return JSON.parse(localStorage.getItem('bloxItems')) || []; }
@@ -606,8 +642,8 @@ function handleTilt(e) {
     const centerX = rect.width / 2;
     const centerY = rect.height / 2;
 
-    const rotateX = ((y - centerY) / centerY) * -3; 
-    const rotateY = ((x - centerX) / centerX) * 3;
+    const rotateX = ((y - centerY) / centerY) * -5; 
+    const rotateY = ((x - centerX) / centerX) * 5;
 
     el.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.01, 1.01, 1.01)`;
     el.style.transition = 'transform 0.1s ease-out, box-shadow 0.3s ease';
